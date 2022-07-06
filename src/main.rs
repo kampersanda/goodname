@@ -8,7 +8,7 @@ fn main() {
     let words = load_lines("words.txt");
     let dict = Dictionary::new(words);
 
-    let input = "abcd";
+    let input = "ChaRActer".to_lowercase();
     enumurate_all_subsequences(input.as_bytes().to_vec(), vec![], &dict);
 }
 
