@@ -139,11 +139,11 @@ mod tests {
         let expected = vec![
             Match {
                 value: 1,
-                score: 62,
+                score: 31,
             }, // "abAaB"
             Match {
                 value: 3,
-                score: 26,
+                score: 13,
             }, // "bAB"
         ];
         assert_eq!(matched, expected);
