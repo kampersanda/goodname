@@ -30,10 +30,11 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let mut matched = Enumerator::all_subsequences(&trie, args.input_text.as_bytes())?;
     matched.sort_by_key(|m| std::cmp::Reverse(m.score));
+    println!("Matched {} candidates", matched.len());
 
     let k = args.topk.min(matched.len());
-    for m in &matched[..k] {
-        println!("{} (score={})", words[m.value], m.score);
+    for (i, m) in matched[..k].iter().enumerate() {
+        println!("{}: {} (score={})", i, words[m.value], m.score);
     }
 
     Ok(())
