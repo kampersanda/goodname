@@ -1,14 +1,10 @@
-pub mod enumerator;
-pub mod trie;
-pub mod utils;
-
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::string::String;
 
-use enumerator::Enumerator;
-use trie::Trie;
+use goodname::Enumerator;
+use goodname::Trie;
 
 fn main() {
     let words = load_lines("words.txt");
