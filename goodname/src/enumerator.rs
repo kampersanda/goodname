@@ -7,7 +7,7 @@ use crate::utils;
 
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
-const MIN_LENGTH: usize = 4;
+const MIN_LENGTH: usize = 3;
 const SCORE_FACTOR: usize = 1;
 
 struct State {
