@@ -2,7 +2,7 @@
 
 Goodname is a tool to assist you with cool naming of your methods and software.
 Given a brief description of your method or software,
-this tool enumerates words forming subsequences of the description.
+this tool enumerates name candidates forming subsequences of the description.
 
 For example, when a description of your software is "Character-wise Double-array Dictionary",
 this tool will suggest some name candidates such as "crawdad" and "cheddar" that are contained in a word dictionary.
