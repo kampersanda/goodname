@@ -1,5 +1,6 @@
 pub mod enumerator;
 pub mod trie;
+pub mod utils;
 
 use std::fs::File;
 use std::io::{BufRead, BufReader};
