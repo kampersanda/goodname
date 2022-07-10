@@ -13,7 +13,7 @@ use clap::Parser;
 #[clap(name = "goodname-cli", about = "A CLI tool of goodname.")]
 struct Args {
     #[clap(short = 'w', action)]
-    words_filename: String,
+    wordlist_filename: String,
 
     #[clap(short = 'i', action)]
     input_text: String,
@@ -25,7 +25,7 @@ struct Args {
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
-    let words = load_lines(&args.words_filename)?;
+    let words = load_lines(&args.wordlist_filename)?;
     let trie = Trie::from_words(&words)?;
 
     let mut matched = Enumerator::all_subsequences(&trie, args.input_text.as_bytes())?;
