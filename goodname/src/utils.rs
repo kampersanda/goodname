@@ -1,12 +1,9 @@
 const UPPER_TO_LOWER: [u8; 256] = {
     let mut map = [0; 256];
-    let mut i = 1;
-    while i < 256 {
-        let c = i as u8;
-        if b'A' <= c && c <= b'Z' {
-            map[i] = c + (b'a' - b'A'); // To the lower one
-        }
-        i += 1;
+    let mut c = b'A';
+    while c <= b'Z' {
+        map[c as usize] = c + (b'a' - b'A'); // To the lower one
+        c += 1;
     }
     map
 };
