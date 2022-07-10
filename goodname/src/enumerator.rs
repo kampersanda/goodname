@@ -8,6 +8,7 @@ use crate::utils;
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
 const MIN_LENGTH: usize = 4;
+const SCORE_FACTOR: usize = 1;
 
 struct State {
     node_pos: u32,
@@ -52,7 +53,8 @@ impl<'a> Enumerator<'a> {
         let mut scores = vec![0; text.len()];
         let max_score = text
             .split(|&c| c == DELIMITER)
-            .fold(0, |max, sub| max.max(sub.len()));
+            .fold(0, |max, sub| max.max(sub.len()))
+            * SCORE_FACTOR;
         let mut curr_score = 0;
         for (&c, score) in text.iter().zip(scores.iter_mut()) {
             if c == DELIMITER {
@@ -60,7 +62,7 @@ impl<'a> Enumerator<'a> {
             } else if curr_score == 0 {
                 curr_score = max_score;
             } else {
-                curr_score = curr_score - 1;
+                curr_score = curr_score - SCORE_FACTOR;
             }
             *score = curr_score;
         }
