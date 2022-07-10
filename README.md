@@ -29,7 +29,7 @@ Matched 5 candidates
 
 Set upper-case letters in the input description to contain the letters in output candidates.
 In the above example, subsequence ('C', 'D'. 'D') is always contained in the candidates.
-If you obtain too many or too few candidates, adjust adjust the capitalization setting.
+If you obtain too many or too few candidates, adjust the capitalization setting.
 
 The candidates are printed in score order.
 The scores are assigned based on the following ideas:
