@@ -3,11 +3,23 @@ pub struct Trie {
 }
 
 impl Trie {
-    pub fn from_keyset<T>(keyset: &[(T, u32)]) -> Self
+    pub fn from_keys<K>(keys: &[K]) -> Self
     where
-        T: AsRef<[u8]>,
+        K: AsRef<[u8]>,
     {
-        let data = yada::builder::DoubleArrayBuilder::build(keyset).unwrap();
+        let records: Vec<_> = keys
+            .iter()
+            .enumerate()
+            .map(|(i, k)| (k.as_ref(), i as u32))
+            .collect();
+        Self::from_records(&records)
+    }
+
+    pub fn from_records<K>(records: &[(K, u32)]) -> Self
+    where
+        K: AsRef<[u8]>,
+    {
+        let data = yada::builder::DoubleArrayBuilder::build(records).unwrap();
         assert_eq!(data.len() % 4, 0);
         let mut units = Vec::with_capacity(data.len() / 4);
         for i in (0..data.len()).step_by(4) {
@@ -70,7 +82,7 @@ mod tests {
 
     #[test]
     fn test_toy() {
-        let keyset = &[
+        let records = &[
             ("a".as_bytes(), 0),
             ("ab".as_bytes(), 1),
             ("aba".as_bytes(), 2),
@@ -84,8 +96,8 @@ mod tests {
             ("c".as_bytes(), 10),
             ("caa".as_bytes(), 11),
         ];
-        let trie = Trie::from_keyset(keyset);
-        for &(key, value) in keyset {
+        let trie = Trie::from_records(records);
+        for &(key, value) in records {
             let mut node_pos = Trie::root_pos();
             for &c in key {
                 node_pos = trie.get_child(node_pos, c).unwrap();

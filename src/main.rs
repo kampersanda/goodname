@@ -1,52 +1,25 @@
-use std::collections::HashMap;
+pub mod enumerator;
+pub mod trie;
+
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::string::String;
 
+use enumerator::Enumerator;
+use trie::Trie;
+
 fn main() {
     let words = load_lines("words.txt");
-    let dict = Dictionary::new(words);
+    let trie = Trie::from_keys(&words);
 
     let input = "ChaRActer".to_lowercase();
-    enumurate_all_subsequences(input.as_bytes().to_vec(), vec![], &dict);
-}
+    let mut ids = Enumerator::all_subsequences(&trie, input.as_bytes());
+    ids.sort();
+    ids.dedup();
 
-fn enumurate_all_subsequences(input: Vec<u8>, output: Vec<u8>, dict: &Dictionary) {
-    if input.is_empty() {
-        if let Some(i) = dict.get(&output) {
-            println!("{} => {}", String::from_utf8(output).unwrap(), i);
-        }
-        return;
-    }
-
-    let mut concat = output.clone();
-    concat.push(input[0]);
-
-    enumurate_all_subsequences(input[1..].to_vec(), concat, dict);
-    enumurate_all_subsequences(input[1..].to_vec(), output, dict);
-}
-
-struct Dictionary {
-    map: HashMap<Vec<u8>, usize>,
-}
-
-impl Dictionary {
-    fn new<I, W>(words: I) -> Self
-    where
-        I: IntoIterator<Item = W>,
-        W: AsRef<str>,
-    {
-        let mut map = HashMap::new();
-        for (i, word) in words.into_iter().enumerate() {
-            let word = word.as_ref().as_bytes();
-            map.insert(word.to_vec(), i);
-        }
-        Self { map }
-    }
-
-    fn get(&self, word: &[u8]) -> Option<usize> {
-        self.map.get(word).cloned()
+    for id in ids {
+        println!("{}", words[id as usize]);
     }
 }
 
