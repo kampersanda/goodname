@@ -27,9 +27,8 @@ impl Trie {
                 }
             }
         }
-        let data = yada::builder::DoubleArrayBuilder::build(&records).ok_or(anyhow!(
-            "Failed to run yada::builder::DoubleArrayBuilder::build."
-        ))?;
+        let data = yada::builder::DoubleArrayBuilder::build(&records)
+            .ok_or_else(|| anyhow!("Failed to run yada::builder::DoubleArrayBuilder::build."))?;
         assert_eq!(data.len() % 4, 0);
         let mut units = Vec::with_capacity(data.len() / 4);
         for i in (0..data.len()).step_by(4) {
@@ -66,22 +65,22 @@ impl Trie {
     }
 
     #[inline(always)]
-    fn has_leaf(unit: u32) -> bool {
+    const fn has_leaf(unit: u32) -> bool {
         ((unit >> 8) & 1) == 1
     }
 
     #[inline(always)]
-    fn value(unit: u32) -> u32 {
+    const fn value(unit: u32) -> u32 {
         unit & ((1 << 31) - 1)
     }
 
     #[inline(always)]
-    fn label(unit: u32) -> u32 {
+    const fn label(unit: u32) -> u32 {
         unit & ((1 << 31) | 0xFF)
     }
 
     #[inline(always)]
-    fn offset(unit: u32) -> u32 {
+    const fn offset(unit: u32) -> u32 {
         (unit >> 10) << ((unit & (1 << 9)) >> 6)
     }
 }

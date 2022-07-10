@@ -18,8 +18,8 @@ struct State {
 }
 
 impl State {
-    fn new(node_pos: u32, text_pos: usize, score: usize, length: usize) -> Self {
-        State {
+    const fn new(node_pos: u32, text_pos: usize, score: usize, length: usize) -> Self {
+        Self {
             node_pos,
             text_pos,
             score,
@@ -62,7 +62,7 @@ impl<'a> Enumerator<'a> {
             } else if curr_score == 0 {
                 curr_score = max_score;
             } else {
-                curr_score = curr_score - SCORE_FACTOR;
+                curr_score -= SCORE_FACTOR;
             }
             *score = curr_score;
         }
@@ -117,7 +117,7 @@ impl<'a> Enumerator<'a> {
                 matched,
             )?;
         }
-        return Ok(());
+        Ok(())
     }
 }
 
