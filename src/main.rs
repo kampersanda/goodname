@@ -12,15 +12,14 @@ use trie::Trie;
 
 fn main() {
     let words = load_lines("words.txt");
-    let trie = Trie::from_keys(&words);
+    let trie = Trie::from_words(&words);
 
-    let input = "Character-wise Double-array Dictionary";
-    let mut ids = Enumerator::all_subsequences(&trie, input.as_bytes());
-    ids.sort();
-    ids.dedup();
+    let input = "Character-wise double-array dictionary";
+    let mut matched = Enumerator::all_subsequences(&trie, input.as_bytes());
+    matched.sort_by_key(|m| std::cmp::Reverse(m.score));
 
-    for id in ids {
-        println!("{}", words[id as usize]);
+    for m in matched {
+        println!("{} => {}", words[m.value], m.score);
     }
 }
 
