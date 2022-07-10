@@ -106,7 +106,7 @@ mod tests {
             "bb".as_bytes(),
             "bbb".as_bytes(),
         ];
-        let trie = Trie::from_words(words);
+        let trie = Trie::from_words(words).unwrap();
         let text = "abAaB".as_bytes();
 
         let mut matched = Enumerator::all_subsequences(&trie, text);

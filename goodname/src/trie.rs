@@ -1,24 +1,38 @@
+use anyhow::{anyhow, Result};
+
+use crate::utils;
+
 pub struct Trie {
     units: Vec<u32>,
 }
 
 impl Trie {
-    pub fn from_words<K>(words: &[K]) -> Self
+    pub fn from_words<I, K>(words: I) -> Result<Self>
     where
+        I: IntoIterator<Item = K>,
         K: AsRef<[u8]>,
     {
         let records: Vec<_> = words
-            .iter()
+            .into_iter()
             .enumerate()
-            .map(|(i, k)| (k.as_ref(), i as u32))
+            .map(|(i, k)| (k.as_ref().to_vec(), u32::try_from(i).unwrap()))
             .collect();
-        let data = yada::builder::DoubleArrayBuilder::build(&records).unwrap();
+        for (word, _) in &records {
+            for &c in word {
+                if utils::is_upper_case(c) {
+                    return Err(anyhow!("Input words must not contain upper case letters."));
+                }
+            }
+        }
+        let data = yada::builder::DoubleArrayBuilder::build(&records).ok_or(anyhow!(
+            "Failed to run yada::builder::DoubleArrayBuilder::build."
+        ))?;
         assert_eq!(data.len() % 4, 0);
         let mut units = Vec::with_capacity(data.len() / 4);
         for i in (0..data.len()).step_by(4) {
             units.push(u32::from_le_bytes(data[i..i + 4].try_into().unwrap()));
         }
-        Self { units }
+        Ok(Self { units })
     }
 
     #[inline(always)]
@@ -83,7 +97,7 @@ mod tests {
             "bb".as_bytes(),
             "bbb".as_bytes(),
         ];
-        let trie = Trie::from_words(words);
+        let trie = Trie::from_words(words).unwrap();
         for (i, &word) in words.iter().enumerate() {
             let mut node_pos = Trie::root_pos();
             for &c in word {

@@ -8,7 +8,7 @@ use goodname::Trie;
 
 fn main() {
     let words = load_lines("words.txt");
-    let trie = Trie::from_words(&words);
+    let trie = Trie::from_words(&words).unwrap();
 
     let input = "Character-wise double-array dictionary";
     let mut matched = Enumerator::all_subsequences(&trie, input.as_bytes());
