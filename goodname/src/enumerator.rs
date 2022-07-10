@@ -7,19 +7,22 @@ use crate::utils;
 
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
+const MIN_LENGTH: usize = 4;
 
 struct State {
     node_pos: u32,
     text_pos: usize,
     score: usize,
+    length: usize,
 }
 
 impl State {
-    fn new(node_pos: u32, text_pos: usize, score: usize) -> Self {
+    fn new(node_pos: u32, text_pos: usize, score: usize, length: usize) -> Self {
         State {
             node_pos,
             text_pos,
             score,
+            length,
         }
     }
 }
@@ -41,7 +44,7 @@ impl<'a> Enumerator<'a> {
         let scores = Self::build_scores(text);
         let enumerator = Self { trie, text, scores };
         let mut matched = HashMap::new();
-        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched)?;
+        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0, 0), &mut matched)?;
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
@@ -73,8 +76,13 @@ impl<'a> Enumerator<'a> {
             node_pos,
             text_pos,
             score,
+            length,
         } = state;
+
         if text_pos == self.text.len() {
+            if length < MIN_LENGTH {
+                return Ok(());
+            }
             if let Some(value) = self.trie.get_value(node_pos) {
                 matched
                     .entry(value)
@@ -91,11 +99,19 @@ impl<'a> Enumerator<'a> {
         let c = self.text[text_pos];
         if !utils::is_upper_case(c) {
             // Allows an epsilon transition only for non upper letters.
-            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched)?;
+            self.all_subsequences_recur(
+                State::new(node_pos, text_pos + 1, score, length),
+                matched,
+            )?;
         }
         if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
             self.all_subsequences_recur(
-                State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
+                State::new(
+                    node_pos,
+                    text_pos + 1,
+                    score + self.scores[text_pos],
+                    length + 1,
+                ),
                 matched,
             )?;
         }
