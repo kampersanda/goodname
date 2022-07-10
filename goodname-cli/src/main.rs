@@ -7,16 +7,33 @@ use std::string::String;
 use goodname::Enumerator;
 use goodname::Trie;
 
+use clap::Parser;
+
+#[derive(Parser, Debug)]
+#[clap(name = "goodname-cli", about = "A CLI tool of goodname.")]
+struct Args {
+    #[clap(short = 'w', action)]
+    words_filename: String,
+
+    #[clap(short = 'i', action)]
+    input_text: String,
+
+    #[clap(short = 'k', action, default_value = "100")]
+    topk: usize,
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
-    let words = load_lines("words.txt")?;
+    let args = Args::parse();
+
+    let words = load_lines(&args.words_filename)?;
     let trie = Trie::from_words(&words)?;
 
-    let input = "Character-wise double-array dictionary";
-    let mut matched = Enumerator::all_subsequences(&trie, input.as_bytes())?;
+    let mut matched = Enumerator::all_subsequences(&trie, args.input_text.as_bytes())?;
     matched.sort_by_key(|m| std::cmp::Reverse(m.score));
 
-    for m in matched {
-        println!("{} => {}", words[m.value], m.score);
+    let k = args.topk.min(matched.len());
+    for m in &matched[..k] {
+        println!("{} (score={})", words[m.value], m.score);
     }
 
     Ok(())
