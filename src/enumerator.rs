@@ -25,6 +25,17 @@ const fn to_lower_case(c: u8) -> u8 {
     }
 }
 
+struct State {
+    node_pos: u32,
+    text_pos: usize,
+}
+
+impl State {
+    fn new(node_pos: u32, text_pos: usize) -> Self {
+        State { node_pos, text_pos }
+    }
+}
+
 pub struct Enumerator<'a> {
     trie: &'a Trie,
     text: &'a [u8],
@@ -34,11 +45,12 @@ impl<'a> Enumerator<'a> {
     pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Vec<u32> {
         let enumerator = Self { trie, text };
         let mut results = vec![];
-        enumerator.all_subsequences_recur(Trie::root_pos(), 0, &mut results);
+        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0), &mut results);
         results
     }
 
-    pub fn all_subsequences_recur(&self, node_pos: u32, text_pos: usize, results: &mut Vec<u32>) {
+    fn all_subsequences_recur(&self, state: State, results: &mut Vec<u32>) {
+        let State { node_pos, text_pos } = state;
         if text_pos == self.text.len() {
             if let Some(v) = self.trie.get_value(node_pos) {
                 results.push(v);
@@ -46,12 +58,12 @@ impl<'a> Enumerator<'a> {
             return;
         }
         let c = self.text[text_pos];
-        // Allows an epsilon transition only for non upper letters.
         if !is_upper_case(c) {
-            self.all_subsequences_recur(node_pos, text_pos + 1, results);
+            // Allows an epsilon transition only for non upper letters.
+            self.all_subsequences_recur(State::new(node_pos, text_pos + 1), results);
         }
         if let Some(node_pos) = self.trie.get_child(node_pos, to_lower_case(c)) {
-            self.all_subsequences_recur(node_pos, text_pos + 1, results);
+            self.all_subsequences_recur(State::new(node_pos, text_pos + 1), results);
         }
     }
 }
