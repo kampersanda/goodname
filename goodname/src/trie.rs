@@ -38,12 +38,12 @@ impl Trie {
     }
 
     #[inline(always)]
-    pub const fn root_pos() -> u32 {
+    pub(crate) const fn root_pos() -> u32 {
         0
     }
 
     #[inline(always)]
-    pub fn get_value(&self, node_pos: u32) -> Option<usize> {
+    pub(crate) fn get_value(&self, node_pos: u32) -> Option<usize> {
         if Self::has_leaf(self.get_unit(node_pos)) {
             let node_pos = Self::offset(self.get_unit(node_pos)) ^ node_pos;
             Some(Self::value(self.get_unit(node_pos)) as usize)
@@ -53,10 +53,10 @@ impl Trie {
     }
 
     #[inline(always)]
-    pub fn get_child(&self, node_pos: u32, c: u8) -> Option<u32> {
+    pub(crate) fn get_child(&self, node_pos: u32, c: u8) -> Option<u32> {
         let c = c as u32;
         let node_pos = Self::offset(self.get_unit(node_pos)) ^ node_pos ^ c;
-        Some(node_pos).filter(|&node_pos| Self::label(self.get_unit(node_pos)) == c)
+        Some(node_pos).filter(|&i| Self::label(self.get_unit(i)) == c)
     }
 
     #[inline(always)]

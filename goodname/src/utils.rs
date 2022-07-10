@@ -8,10 +8,12 @@ const UPPER_TO_LOWER: [u8; 256] = {
     map
 };
 
+#[inline(always)]
 pub const fn is_upper_case(c: u8) -> bool {
     UPPER_TO_LOWER[c as usize] != 0
 }
 
+#[inline(always)]
 pub const fn to_lower_case(c: u8) -> u8 {
     if is_upper_case(c) {
         UPPER_TO_LOWER[c as usize]

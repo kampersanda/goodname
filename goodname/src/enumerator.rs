@@ -12,16 +12,15 @@ struct State {
     node_pos: u32,
     text_pos: usize,
     score: usize,
-    length: usize,
 }
 
 impl State {
-    const fn new(node_pos: u32, text_pos: usize, score: usize, length: usize) -> Self {
+    #[inline(always)]
+    const fn new(node_pos: u32, text_pos: usize, score: usize) -> Self {
         Self {
             node_pos,
             text_pos,
             score,
-            length,
         }
     }
 }
@@ -43,7 +42,7 @@ impl<'a> Enumerator<'a> {
         let scores = Self::build_scores(text);
         let enumerator = Self { trie, text, scores };
         let mut matched = HashMap::new();
-        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0, 0), &mut matched)?;
+        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched)?;
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
@@ -76,7 +75,6 @@ impl<'a> Enumerator<'a> {
             node_pos,
             text_pos,
             score,
-            length,
         } = state;
 
         if text_pos == self.text.len() {
@@ -88,7 +86,10 @@ impl<'a> Enumerator<'a> {
                     })
                     .or_insert(Match { value, score });
                 if MAX_MATCHES <= matched.len() {
-                    return Err(anyhow!("#matches exceeds {}.", MAX_MATCHES));
+                    return Err(anyhow!(
+                        "#matches is too many, exceeding {}. Please reconsider your input.",
+                        MAX_MATCHES
+                    ));
                 }
             }
             return Ok(());
@@ -96,19 +97,11 @@ impl<'a> Enumerator<'a> {
         let c = self.text[text_pos];
         if !utils::is_upper_case(c) {
             // Allows an epsilon transition only for non upper letters.
-            self.all_subsequences_recur(
-                State::new(node_pos, text_pos + 1, score, length),
-                matched,
-            )?;
+            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched)?;
         }
         if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
             self.all_subsequences_recur(
-                State::new(
-                    node_pos,
-                    text_pos + 1,
-                    score + self.scores[text_pos],
-                    length + 1,
-                ),
+                State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
                 matched,
             )?;
         }
