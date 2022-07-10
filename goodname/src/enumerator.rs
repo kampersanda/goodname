@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
+use anyhow::{anyhow, Result};
+
 use crate::trie::Trie;
 use crate::utils;
 
 const DELIMITER: u8 = b' ';
+const MAX_MATCHES: usize = 65536;
 
 struct State {
     node_pos: u32,
@@ -34,12 +37,12 @@ pub struct Enumerator<'a> {
 }
 
 impl<'a> Enumerator<'a> {
-    pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Vec<Match> {
+    pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Result<Vec<Match>> {
         let scores = Self::build_scores(text);
         let enumerator = Self { trie, text, scores };
         let mut matched = HashMap::new();
-        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched);
-        matched.iter().map(|(_, &m)| m).collect()
+        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched)?;
+        Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
     fn build_scores(text: &'a [u8]) -> Vec<usize> {
@@ -61,7 +64,11 @@ impl<'a> Enumerator<'a> {
         scores
     }
 
-    fn all_subsequences_recur(&self, state: State, matched: &mut HashMap<usize, Match>) {
+    fn all_subsequences_recur(
+        &self,
+        state: State,
+        matched: &mut HashMap<usize, Match>,
+    ) -> Result<()> {
         let State {
             node_pos,
             text_pos,
@@ -75,20 +82,24 @@ impl<'a> Enumerator<'a> {
                         m.value = m.value.max(value);
                     })
                     .or_insert(Match { value, score });
+                if MAX_MATCHES <= matched.len() {
+                    return Err(anyhow!("#matches exceeds {}.", MAX_MATCHES));
+                }
             }
-            return;
+            return Ok(());
         }
         let c = self.text[text_pos];
         if !utils::is_upper_case(c) {
             // Allows an epsilon transition only for non upper letters.
-            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched);
+            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched)?;
         }
         if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
             self.all_subsequences_recur(
                 State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
                 matched,
-            );
+            )?;
         }
+        return Ok(());
     }
 }
 
@@ -109,7 +120,7 @@ mod tests {
         let trie = Trie::from_words(words).unwrap();
         let text = "abAaB".as_bytes();
 
-        let mut matched = Enumerator::all_subsequences(&trie, text);
+        let mut matched = Enumerator::all_subsequences(&trie, text).unwrap();
         matched.sort_by_key(|m| std::cmp::Reverse(m.score));
 
         let expected = vec![

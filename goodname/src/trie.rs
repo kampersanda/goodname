@@ -20,7 +20,10 @@ impl Trie {
         for (word, _) in &records {
             for &c in word {
                 if utils::is_upper_case(c) {
-                    return Err(anyhow!("Input words must not contain upper case letters."));
+                    return Err(anyhow!(
+                        "Input words must not contain upper case letters ({}).",
+                        std::str::from_utf8(word).unwrap()
+                    ));
                 }
             }
         }
