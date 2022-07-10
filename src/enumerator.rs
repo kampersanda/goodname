@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use crate::trie::Trie;
 use crate::utils;
 
+const DELIMITER: u8 = b' ';
+
 struct State {
     node_pos: u32,
     text_pos: usize,
@@ -28,14 +30,35 @@ pub struct Match {
 pub struct Enumerator<'a> {
     trie: &'a Trie,
     text: &'a [u8],
+    scores: Vec<usize>,
 }
 
 impl<'a> Enumerator<'a> {
     pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Vec<Match> {
-        let enumerator = Self { trie, text };
+        let scores = Self::build_scores(text);
+        let enumerator = Self { trie, text, scores };
         let mut matched = HashMap::new();
         enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched);
         matched.iter().map(|(_, &m)| m).collect()
+    }
+
+    fn build_scores(text: &'a [u8]) -> Vec<usize> {
+        let mut scores = vec![0; text.len()];
+        let max_score = text
+            .split(|&c| c == DELIMITER)
+            .fold(0, |max, sub| max.max(sub.len()));
+        let mut curr_score = 0;
+        for (&c, score) in text.iter().zip(scores.iter_mut()) {
+            if c == DELIMITER {
+                curr_score = 0;
+            } else if curr_score == 0 {
+                curr_score = max_score;
+            } else {
+                curr_score = curr_score - 1;
+            }
+            *score = curr_score;
+        }
+        scores
     }
 
     fn all_subsequences_recur(&self, state: State, matched: &mut HashMap<usize, Match>) {
@@ -61,7 +84,10 @@ impl<'a> Enumerator<'a> {
             self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched);
         }
         if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
-            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score + 1), matched);
+            self.all_subsequences_recur(
+                State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
+                matched,
+            );
         }
     }
 }
@@ -87,8 +113,11 @@ mod tests {
         matched.sort_by_key(|m| std::cmp::Reverse(m.score));
 
         let expected = vec![
-            Match { value: 1, score: 5 }, // "abAaB"
-            Match { value: 3, score: 3 }, // "abAaB"
+            Match {
+                value: 1,
+                score: 15,
+            }, // "abAaB"
+            Match { value: 3, score: 8 }, // "bAB"
         ];
         assert_eq!(matched, expected);
     }
