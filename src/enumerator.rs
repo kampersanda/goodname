@@ -70,18 +70,15 @@ mod tests {
             ("bb".as_bytes(), 4),
             ("bbb".as_bytes(), 5),
         ];
-        let text = "abaab".as_bytes();
+        let text = "abAaB".as_bytes();
         let trie = Trie::from_records(records);
 
         let mut results = Enumerator::all_subsequences(&trie, text);
         results.sort();
 
         let expected = vec![
-            0, 0, 0, // "aa"
-            1, // "abaab"
-            2, // "abb"
-            3, 3, // "bab"
-            4, // "bb"
+            1, // "abAaB"
+            3, // "bAB"
         ];
         assert_eq!(results, expected);
     }
