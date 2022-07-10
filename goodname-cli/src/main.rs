@@ -28,8 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let words = load_lines(&args.wordlist_filename)?;
     let trie = Trie::from_words(&words)?;
 
-    let mut matched = Enumerator::all_subsequences(&trie, args.input_text.as_bytes())?;
-    matched.sort_by_key(|m| std::cmp::Reverse(m.score));
+    let matched = Enumerator::all_subsequences_sorted(&trie, args.input_text.as_bytes())?;
     println!("Matched {} candidates", matched.len());
 
     let k = args.topk.min(matched.len());

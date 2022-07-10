@@ -46,6 +46,12 @@ impl<'a> Enumerator<'a> {
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
+    pub fn all_subsequences_sorted(trie: &'a Trie, text: &'a [u8]) -> Result<Vec<Match>> {
+        let mut matched = Self::all_subsequences(trie, text)?;
+        matched.sort_by_key(|m| std::cmp::Reverse(m.score));
+        Ok(matched)
+    }
+
     fn build_scores(text: &'a [u8]) -> Vec<usize> {
         let mut scores = vec![0; text.len()];
         let max_word_len = text
@@ -94,11 +100,14 @@ impl<'a> Enumerator<'a> {
             }
             return Ok(());
         }
+
         let c = self.text[text_pos];
+
         if !utils::is_upper_case(c) {
             // Allows an epsilon transition only for non upper letters.
             self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched)?;
         }
+
         if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
             self.all_subsequences_recur(
                 State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
@@ -126,9 +135,7 @@ mod tests {
         let trie = Trie::from_words(words).unwrap();
         let text = "abAaB".as_bytes();
 
-        let mut matched = Enumerator::all_subsequences(&trie, text).unwrap();
-        matched.sort_by_key(|m| std::cmp::Reverse(m.score));
-
+        let matched = Enumerator::all_subsequences_sorted(&trie, text).unwrap();
         let expected = vec![
             Match {
                 value: 1,
