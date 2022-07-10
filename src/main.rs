@@ -13,7 +13,7 @@ fn main() {
     let words = load_lines("words.txt");
     let trie = Trie::from_keys(&words);
 
-    let input = "ChaRActer".to_lowercase();
+    let input = "Character-wise Double-array Dictionary";
     let mut ids = Enumerator::all_subsequences(&trie, input.as_bytes());
     ids.sort();
     ids.dedup();

@@ -1,5 +1,30 @@
 use crate::trie::Trie;
 
+const UPPER_TO_LOWER: [u8; 256] = {
+    let mut map = [0; 256];
+    let mut i = 1;
+    while i < 256 {
+        let c = i as u8;
+        if b'A' <= c && c <= b'Z' {
+            map[i] = c + (b'a' - b'A'); // To the lower one
+        }
+        i += 1;
+    }
+    map
+};
+
+const fn is_upper_case(c: u8) -> bool {
+    UPPER_TO_LOWER[c as usize] != 0
+}
+
+const fn to_lower_case(c: u8) -> u8 {
+    if is_upper_case(c) {
+        UPPER_TO_LOWER[c as usize]
+    } else {
+        c
+    }
+}
+
 pub struct Enumerator<'a> {
     trie: &'a Trie,
     text: &'a [u8],
@@ -7,9 +32,9 @@ pub struct Enumerator<'a> {
 
 impl<'a> Enumerator<'a> {
     pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Vec<u32> {
-        let e = Self { trie, text };
+        let enumerator = Self { trie, text };
         let mut results = vec![];
-        e.all_subsequences_recur(Trie::root_pos(), 0, &mut results);
+        enumerator.all_subsequences_recur(Trie::root_pos(), 0, &mut results);
         results
     }
 
@@ -20,8 +45,12 @@ impl<'a> Enumerator<'a> {
             }
             return;
         }
-        self.all_subsequences_recur(node_pos, text_pos + 1, results);
-        if let Some(node_pos) = self.trie.get_child(node_pos, self.text[text_pos]) {
+        let c = self.text[text_pos];
+        // Allows an epsilon transition only for non upper letters.
+        if !is_upper_case(c) {
+            self.all_subsequences_recur(node_pos, text_pos + 1, results);
+        }
+        if let Some(node_pos) = self.trie.get_child(node_pos, to_lower_case(c)) {
             self.all_subsequences_recur(node_pos, text_pos + 1, results);
         }
     }
@@ -55,5 +84,18 @@ mod tests {
             4, // "bb"
         ];
         assert_eq!(results, expected);
+    }
+
+    #[test]
+    fn test_letter_case() {
+        assert!(!is_upper_case(b'@'));
+        assert!(is_upper_case(b'A'));
+        assert!(is_upper_case(b'Z'));
+        assert!(!is_upper_case(b'['));
+
+        assert_eq!(to_lower_case(b'A'), b'a');
+        assert_eq!(to_lower_case(b'Z'), b'z');
+        assert_eq!(to_lower_case(b'a'), b'a');
+        assert_eq!(to_lower_case(b'z'), b'z');
     }
 }
