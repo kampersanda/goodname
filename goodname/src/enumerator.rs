@@ -7,7 +7,6 @@ use crate::utils;
 
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
-const MIN_LENGTH: usize = 3;
 const SCORE_FACTOR: usize = 1;
 
 struct State {
@@ -82,9 +81,6 @@ impl<'a> Enumerator<'a> {
         } = state;
 
         if text_pos == self.text.len() {
-            if length < MIN_LENGTH {
-                return Ok(());
-            }
             if let Some(value) = self.trie.get_value(node_pos) {
                 matched
                     .entry(value)
