@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let k = args.topk.min(matched.len());
     for (i, m) in matched[..k].iter().enumerate() {
-        println!("{}: {} (score={})", i, words[m.value], m.score);
+        println!("{}: {} (score={})", i + 1, words[m.value], m.score);
     }
 
     Ok(())

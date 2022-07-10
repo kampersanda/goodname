@@ -7,7 +7,6 @@ use crate::utils;
 
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
-const SCORE_FACTOR: usize = 1;
 
 struct State {
     node_pos: u32,
@@ -50,10 +49,10 @@ impl<'a> Enumerator<'a> {
 
     fn build_scores(text: &'a [u8]) -> Vec<usize> {
         let mut scores = vec![0; text.len()];
-        let max_score = text
+        let max_word_len = text
             .split(|&c| c == DELIMITER)
-            .fold(0, |max, sub| max.max(sub.len()))
-            * SCORE_FACTOR;
+            .fold(0, |max, sub| max.max(sub.len()));
+        let max_score = 1 << (max_word_len - 1);
         let mut curr_score = 0;
         for (&c, score) in text.iter().zip(scores.iter_mut()) {
             if c == DELIMITER {
@@ -61,7 +60,7 @@ impl<'a> Enumerator<'a> {
             } else if curr_score == 0 {
                 curr_score = max_score;
             } else {
-                curr_score -= SCORE_FACTOR;
+                curr_score /= 2;
             }
             *score = curr_score;
         }
@@ -122,7 +121,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_toy() {
+    fn test_enumerate() {
         let words = &[
             "aa".as_bytes(),
             "abaab".as_bytes(),
@@ -140,10 +139,20 @@ mod tests {
         let expected = vec![
             Match {
                 value: 1,
-                score: 15,
+                score: 62,
             }, // "abAaB"
-            Match { value: 3, score: 8 }, // "bAB"
+            Match {
+                value: 3,
+                score: 26,
+            }, // "bAB"
         ];
         assert_eq!(matched, expected);
+    }
+
+    #[test]
+    fn test_build_score() {
+        let text = "ab abc a".as_bytes();
+        let scores = Enumerator::build_scores(text);
+        assert_eq!(scores, vec![4, 2, 0, 4, 2, 1, 0, 4]);
     }
 }
