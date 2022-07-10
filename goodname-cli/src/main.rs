@@ -18,7 +18,7 @@ struct Args {
     #[clap(short = 'i', action)]
     input_text: String,
 
-    #[clap(short = 'k', action, default_value = "100")]
+    #[clap(short = 'k', action, default_value = "30")]
     topk: usize,
 }
 
