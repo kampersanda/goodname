@@ -7,15 +7,14 @@ pub struct Trie {
 }
 
 impl Trie {
-    pub fn from_words<I, W>(words: I) -> Result<Self>
+    pub fn from_words<W>(words: &[W]) -> Result<Self>
     where
-        I: IntoIterator<Item = W>,
         W: AsRef<str>,
     {
         let records: Vec<_> = words
             .into_iter()
             .enumerate()
-            .map(|(i, k)| (k.as_ref().to_string(), u32::try_from(i).unwrap()))
+            .map(|(i, k)| (k.as_ref(), u32::try_from(i).unwrap()))
             .collect();
         Self::verify_words(&records)?;
         let data = yada::builder::DoubleArrayBuilder::build(&records)
@@ -147,24 +146,24 @@ mod tests {
     #[test]
     #[should_panic]
     fn test_empty_word() {
-        Trie::from_words(["", "a", "b"]).unwrap();
+        Trie::from_words(&["", "a", "b"]).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_unsorted() {
-        Trie::from_words(["a", "c", "b"]).unwrap();
+        Trie::from_words(&["a", "c", "b"]).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_uppercase() {
-        Trie::from_words(["a", "B", "c"]).unwrap();
+        Trie::from_words(&["a", "B", "c"]).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn test_multibyte() {
-        Trie::from_words(["a", "Ｂ", "c"]).unwrap();
+        Trie::from_words(&["a", "Ｂ", "c"]).unwrap();
     }
 }
