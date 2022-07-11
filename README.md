@@ -18,13 +18,13 @@ The arguments are
 An example usage is as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise Double array Dictionary" -k 10
-Matched 5 candidates
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise Double array Dictionary" -k 5
+Matched 10 candidates
 1: crawdad (score=2208)
-2: cheddar (score=1862)
-3: chaddar (score=1830)
-4: caddo (score=1584)
-5: caddy (score=1569)
+2: chided (score=2064)
+3: cheddar (score=1862)
+4: creeded (score=1684)
+5: cradled (score=1680)
 ```
 
 Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
@@ -33,18 +33,13 @@ In the above example, subsequence ('C', 'D'. 'D') is always contained in the can
 If you obtain too many or too few candidates, adjust the capitalization setting, as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise double array dictionary" -k 10
-Matched 378 candidates
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise double array dictionary" -k 5
+Matched 1047 candidates
 1: crawdad (score=2208)
-2: ciardi (score=1952)
-3: charadrii (score=1920)
-4: chard (score=1920)
-5: cheddar (score=1862)
-6: chaddar (score=1830)
-7: chiseled (score=1776)
-8: characid (score=1776)
-9: cedarn (score=1736)
-10: charity (score=1729)
+2: chresard (score=2116)
+3: chided (score=2064)
+4: cardita (score=1988)
+5: chawdron (score=1976)
 ```
 
 The candidates are printed in score order.
@@ -57,18 +52,14 @@ Here, "word in a description" indicates space-separated ones.
 If you replace space letters into other ones (e.g., hyphens), resulting scores will be changed, as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character-wise double-array dictionary" -k 10
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character-wise double-array dictionary" -k 5
 Matched 382 candidates
-1: chaddar (score=29280)
+Matched 1047 candidates
+1: chided (score=28932)
 2: cheddar (score=28769)
 3: charadrii (score=28688)
-4: chadic (score=26632)
-5: crawdad (score=26128)
-6: caddo (score=25344)
-7: caddy (score=25104)
-8: chord (score=24592)
-9: characid (score=24324)
-10: charade (score=24320)
+4: chudic (score=28672)
+5: cradled (score=26880)
 ```
 
 ## TODO
@@ -79,5 +70,4 @@ Matched 382 candidates
 
 ## Credits
 
-`wordlist/words.txt` is a list of English words parsed from [WordNet 3.0](https://wordnet.princeton.edu/license-and-commercial-use).
-
+`wordlist/words.txt` is a list of English words provided by [dwyl/english-words](https://github.com/dwyl/english-words).
