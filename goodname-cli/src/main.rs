@@ -5,7 +5,7 @@ use std::path::Path;
 use std::string::String;
 
 use goodname::Enumerator;
-use goodname::Trie;
+use goodname::Lexicon;
 
 use clap::Parser;
 
@@ -25,16 +25,13 @@ struct Args {
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
-    let words = load_lines(&args.wordlist_filename)?;
-    let trie = Trie::from_words(&words)?;
-
-    let mut matched = Enumerator::all_subsequences(&trie, args.input_text.as_bytes())?;
-    matched.sort_by_key(|m| std::cmp::Reverse(m.score));
+    let lex = Lexicon::new(load_lines(&args.wordlist_filename)?)?;
+    let matched = Enumerator::all_subsequences_sorted(&lex, &args.input_text)?;
     println!("Matched {} candidates", matched.len());
 
     let k = args.topk.min(matched.len());
     for (i, m) in matched[..k].iter().enumerate() {
-        println!("{}: {} (score={})", i + 1, words[m.value], m.score);
+        println!("{}: {} (score={})", i + 1, lex.word(m.word_id), m.score);
     }
 
     Ok(())

@@ -1,6 +1,7 @@
 pub mod enumerator;
-pub mod trie;
+pub mod lexicon;
+mod trie;
 mod utils;
 
 pub use enumerator::Enumerator;
-pub use trie::Trie;
+pub use lexicon::Lexicon;
