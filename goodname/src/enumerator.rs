@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use anyhow::{anyhow, Result};
 
-use crate::trie::Trie;
 use crate::utils;
+use crate::{trie::Trie, Lexicon};
 
 const DELIMITER: u8 = b' ';
 const MAX_MATCHES: usize = 65536;
@@ -27,7 +27,7 @@ impl State {
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct Match {
-    pub value: usize,
+    pub word_id: usize,
     pub score: usize,
 }
 
@@ -38,17 +38,21 @@ pub struct Enumerator<'a> {
 }
 
 impl<'a> Enumerator<'a> {
-    pub fn all_subsequences(trie: &'a Trie, text: &'a str) -> Result<Vec<Match>> {
+    pub fn all_subsequences(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
         let text = text.as_bytes();
         let scores = Self::build_scores(text);
-        let enumerator = Self { trie, text, scores };
+        let enumerator = Self {
+            trie: lex.trie(),
+            text,
+            scores,
+        };
         let mut matched = HashMap::new();
         enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched)?;
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
-    pub fn all_subsequences_sorted(trie: &'a Trie, text: &'a str) -> Result<Vec<Match>> {
-        let mut matched = Self::all_subsequences(trie, text)?;
+    pub fn all_subsequences_sorted(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
+        let mut matched = Self::all_subsequences(lex, text)?;
         matched.sort_by_key(|m| std::cmp::Reverse(m.score));
         Ok(matched)
     }
@@ -85,13 +89,13 @@ impl<'a> Enumerator<'a> {
         } = state;
 
         if text_pos == self.text.len() {
-            if let Some(value) = self.trie.get_value(node_pos) {
+            if let Some(word_id) = self.trie.get_value(node_pos) {
                 matched
-                    .entry(value)
+                    .entry(word_id)
                     .and_modify(|m| {
-                        m.value = m.value.max(value);
+                        m.word_id = m.word_id.max(word_id);
                     })
-                    .or_insert(Match { value, score });
+                    .or_insert(Match { word_id, score });
                 if MAX_MATCHES <= matched.len() {
                     return Err(anyhow!(
                         "#matches is too many, exceeding {}. Please reconsider your input.",
@@ -126,17 +130,17 @@ mod tests {
     #[test]
     fn test_enumerate() {
         let words = &["aa", "abaab", "abb", "bab", "bb", "bbb"];
-        let trie = Trie::from_words(words).unwrap();
+        let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::all_subsequences_sorted(&trie, text).unwrap();
+        let matched = Enumerator::all_subsequences_sorted(&lex, text).unwrap();
         let expected = vec![
             Match {
-                value: 1,
+                word_id: 1,
                 score: 31,
             }, // "abAaB"
             Match {
-                value: 3,
+                word_id: 3,
                 score: 13,
             }, // "bAB"
         ];
