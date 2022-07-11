@@ -2,7 +2,7 @@
 
 Goodname is a tool to assist you with cool naming of your methods and software.
 Given a brief description of your method or software,
-this tool enumerates name candidates forming subsequences of the description.
+this tool enumerates name candidates forming subsequences of the description (i.e., *abbreviation*).
 
 For example, given description "Character-wise Double-array Dictionary" of your software,
 this tool will suggest some name candidates such as "crawdad" and "cheddar" that are contained in a word dictionary.
@@ -13,7 +13,7 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar" that
 The arguments are
 - `-w`: Input word list (must be sorted, unique, and not store upper-case letters),
 - `-i`: Input description of your method or software, and
-- `-k`: Top-k to print (default=`30`).
+- `-k`: Top-k to print (default=30).
 
 An example usage is as follows.
 
@@ -27,8 +27,9 @@ Matched 5 candidates
 5: caddy (score=1569)
 ```
 
-Set upper-case letters in the input description so that an output candidate contains the subsequence consisting of their lower-case ones.
+Set upper-case letters in the input description so that an output always candidate contains the subsequence consisting of those letters.
 In the above example, subsequence ('C', 'D'. 'D') is always contained in the candidates.
+
 If you obtain too many or too few candidates, adjust the capitalization setting, as follows.
 
 ```
