@@ -11,7 +11,7 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar" that
 
 `goodname-cli` provides a CLI tool of Goodname.
 The arguments are
-- `-w`: Input word list (must be sorted, unique, and not store upper-case letters),
+- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters),
 - `-i`: Input description of your method or software, and
 - `-k`: Top-k to print (default=30).
 
@@ -27,7 +27,7 @@ Matched 5 candidates
 5: caddy (score=1569)
 ```
 
-Set upper-case letters in the input description so that an output always candidate contains the subsequence consisting of those letters.
+Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
 In the above example, subsequence ('C', 'D'. 'D') is always contained in the candidates.
 
 If you obtain too many or too few candidates, adjust the capitalization setting, as follows.
