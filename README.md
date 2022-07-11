@@ -53,7 +53,6 @@ If you replace space letters into other ones (e.g., hyphens), resulting scores w
 
 ```
 $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character-wise double-array dictionary" -k 5
-Matched 382 candidates
 Matched 1047 candidates
 1: chided (score=28932)
 2: cheddar (score=28769)
