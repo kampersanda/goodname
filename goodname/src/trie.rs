@@ -7,26 +7,17 @@ pub struct Trie {
 }
 
 impl Trie {
-    pub fn from_words<I, K>(words: I) -> Result<Self>
+    pub fn from_words<I, W>(words: I) -> Result<Self>
     where
-        I: IntoIterator<Item = K>,
-        K: AsRef<[u8]>,
+        I: IntoIterator<Item = W>,
+        W: AsRef<str>,
     {
         let records: Vec<_> = words
             .into_iter()
             .enumerate()
-            .map(|(i, k)| (k.as_ref().to_vec(), u32::try_from(i).unwrap()))
+            .map(|(i, k)| (k.as_ref().to_string(), u32::try_from(i).unwrap()))
             .collect();
-        for (word, _) in &records {
-            for &c in word {
-                if utils::is_upper_case(c) {
-                    return Err(anyhow!(
-                        "Input words must not contain upper case letters ({}).",
-                        std::str::from_utf8(word).unwrap()
-                    ));
-                }
-            }
-        }
+        Self::verify_words(&records)?;
         let data = yada::builder::DoubleArrayBuilder::build(&records)
             .ok_or_else(|| anyhow!("Failed to run yada::builder::DoubleArrayBuilder::build."))?;
         assert_eq!(data.len() % 4, 0);
@@ -35,6 +26,51 @@ impl Trie {
             units.push(u32::from_le_bytes(data[i..i + 4].try_into().unwrap()));
         }
         Ok(Self { units })
+    }
+
+    fn verify_words<W>(records: &[(W, u32)]) -> Result<()>
+    where
+        W: AsRef<str>,
+    {
+        if records.is_empty() {
+            return Err(anyhow!("Input words must not be empty."));
+        }
+        let a = records[0].0.as_ref();
+        if a.is_empty() {
+            return Err(anyhow!("Input words must not contain an empty one."));
+        }
+        Self::verify_ascii(a)?;
+        for i in 1..records.len() {
+            let a = records[i - 1].0.as_ref();
+            let b = records[i].0.as_ref();
+            if a >= b {
+                return Err(anyhow!("Input words must be sorted ({} vs {}).", a, b));
+            }
+            Self::verify_ascii(b)?;
+        }
+        Ok(())
+    }
+
+    fn verify_ascii<W>(word: W) -> Result<()>
+    where
+        W: AsRef<str>,
+    {
+        let word = word.as_ref();
+        for &c in word.as_bytes() {
+            if c >= 0x80 {
+                return Err(anyhow!(
+                    "Input words must not contain multibyte characters ({}).",
+                    word
+                ));
+            }
+            if utils::is_upper_case(c) {
+                return Err(anyhow!(
+                    "Input words must not contain upper-case letters ({}).",
+                    word
+                ));
+            }
+        }
+        Ok(())
     }
 
     #[inline(always)]
@@ -90,22 +126,45 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_toy() {
-        let words = &[
-            "aa".as_bytes(),
-            "abaab".as_bytes(),
-            "abb".as_bytes(),
-            "bab".as_bytes(),
-            "bb".as_bytes(),
-            "bbb".as_bytes(),
-        ];
+    fn test_trie() {
+        let words = &["aa", "abaab", "abb", "bab", "bb", "bbb"];
         let trie = Trie::from_words(words).unwrap();
         for (i, &word) in words.iter().enumerate() {
             let mut node_pos = Trie::root_pos();
-            for &c in word {
+            for &c in word.as_bytes() {
                 node_pos = trie.get_child(node_pos, c).unwrap();
             }
             assert_eq!(i, trie.get_value(node_pos).unwrap());
         }
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_empty_set() {
+        Trie::from_words(&[""][0..0]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_empty_word() {
+        Trie::from_words(["", "a", "b"]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_unsorted() {
+        Trie::from_words(["a", "c", "b"]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_uppercase() {
+        Trie::from_words(["a", "B", "c"]).unwrap();
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_multibyte() {
+        Trie::from_words(["a", "Ｂ", "c"]).unwrap();
     }
 }

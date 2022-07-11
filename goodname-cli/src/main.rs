@@ -28,7 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let words = load_lines(&args.wordlist_filename)?;
     let trie = Trie::from_words(&words)?;
 
-    let matched = Enumerator::all_subsequences_sorted(&trie, args.input_text.as_bytes())?;
+    let matched = Enumerator::all_subsequences_sorted(&trie, &args.input_text)?;
     println!("Matched {} candidates", matched.len());
 
     let k = args.topk.min(matched.len());

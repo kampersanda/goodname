@@ -38,7 +38,8 @@ pub struct Enumerator<'a> {
 }
 
 impl<'a> Enumerator<'a> {
-    pub fn all_subsequences(trie: &'a Trie, text: &'a [u8]) -> Result<Vec<Match>> {
+    pub fn all_subsequences(trie: &'a Trie, text: &'a str) -> Result<Vec<Match>> {
+        let text = text.as_bytes();
         let scores = Self::build_scores(text);
         let enumerator = Self { trie, text, scores };
         let mut matched = HashMap::new();
@@ -46,7 +47,7 @@ impl<'a> Enumerator<'a> {
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
-    pub fn all_subsequences_sorted(trie: &'a Trie, text: &'a [u8]) -> Result<Vec<Match>> {
+    pub fn all_subsequences_sorted(trie: &'a Trie, text: &'a str) -> Result<Vec<Match>> {
         let mut matched = Self::all_subsequences(trie, text)?;
         matched.sort_by_key(|m| std::cmp::Reverse(m.score));
         Ok(matched)
@@ -124,16 +125,9 @@ mod tests {
 
     #[test]
     fn test_enumerate() {
-        let words = &[
-            "aa".as_bytes(),
-            "abaab".as_bytes(),
-            "abb".as_bytes(),
-            "bab".as_bytes(),
-            "bb".as_bytes(),
-            "bbb".as_bytes(),
-        ];
+        let words = &["aa", "abaab", "abb", "bab", "bb", "bbb"];
         let trie = Trie::from_words(words).unwrap();
-        let text = "abAaB".as_bytes();
+        let text = "abAaB";
 
         let matched = Enumerator::all_subsequences_sorted(&trie, text).unwrap();
         let expected = vec![
