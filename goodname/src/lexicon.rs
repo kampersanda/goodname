@@ -22,7 +22,7 @@ impl Lexicon {
         &self.words[word_id]
     }
 
-    pub fn trie(&self) -> &Trie {
+    pub const fn trie(&self) -> &Trie {
         &self.trie
     }
 }

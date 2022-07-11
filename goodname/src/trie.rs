@@ -12,7 +12,7 @@ impl Trie {
         W: AsRef<str>,
     {
         let records: Vec<_> = words
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(i, k)| (k.as_ref(), u32::try_from(i).unwrap()))
             .collect();
