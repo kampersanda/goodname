@@ -11,14 +11,14 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar" that
 
 `goodname-cli` provides a CLI tool of Goodname.
 The arguments are
-- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters),
-- `-i`: Input description of your method or software, and
+- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters), and
 - `-k`: Top-k to print (default=30).
 
-An example usage is as follows.
+Input a description of your method or software with the stdio, as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise Double array Dictionary" -k 5
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
+> Character wise Double array Dictionary
 Matched 10 candidates
 1: crawdad (score=2208)
 2: chided (score=2064)
@@ -28,12 +28,13 @@ Matched 10 candidates
 ```
 
 Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
-In the above example, subsequence ('C', 'D'. 'D') is always contained in the candidates.
+In the above example, subsequence ('C', 'D', 'D') is always contained in the candidates.
 
 If you obtain too many or too few candidates, adjust the capitalization setting, as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character wise double array dictionary" -k 5
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
+> Character wise double array dictionary
 Matched 1047 candidates
 1: crawdad (score=2208)
 2: chresard (score=2116)
@@ -52,7 +53,8 @@ Here, "word in a description" indicates space-separated ones.
 If you replace space letters into other ones (e.g., hyphens), resulting scores will be changed, as follows.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -i "Character-wise double-array dictionary" -k 5
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
+> Character-wise double-array dictionary
 Matched 1047 candidates
 1: chided (score=28932)
 2: cheddar (score=28769)
