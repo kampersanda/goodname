@@ -13,15 +13,17 @@ pub fn cand_view(props: &Props) -> Html {
         <table>
             <thead>
                 <tr>
+                    <td>{"Rank"}</td>
                     <td>{"Candidate"}</td>
                     <td>{"Score"}</td>
                 </tr>
             </thead>
             <tbody>
                 {
-                    for candidates.into_iter().map(|(cand, score)| html! {
+                    for candidates.into_iter().enumerate().map(|(i, (cand, score))| html! {
                         <tr>
-                            <td>{cand}</td>
+                            <td>{i+1}</td>
+                            <td><a href={format!("https://www.google.com/search?q={}", cand)} target="_blank">{cand}</a></td>
                             <td>{score}</td>
                         </tr>
                     })

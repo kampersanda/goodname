@@ -1,0 +1,55 @@
+input {
+  font-family: monospace;
+  font-size: 14pt;
+  width: calc(100% - 2px);
+  margin: 10px 0 10px 0;
+  padding: 0;
+  border: 1px solid #333;
+}
+
+table {
+  border: 1px solid #000;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+td {
+  border: 1px solid #000;
+}
+
+thead,
+tfoot {
+  background-color: #000;
+  color: #fff;
+}
+
+body {
+  width: calc(100% - 20px);
+  margin: 10px;
+  font-family: monospace;
+}
+
+.header-link {
+  text-align: right;
+}
+
+a {
+  color: #000;
+}
+
+// button {
+//   background-color: #008f53;
+//   /* Green */
+//   border: 1px;
+//   color: white;
+//   padding: 14px 14px;
+//   text-align: center;
+//   font-size: 16px;
+//   margin: 2px 2px;
+//   width: 100px;
+// }
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+}
