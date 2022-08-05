@@ -6,7 +6,7 @@ use crate::utils;
 use crate::{trie::Trie, Lexicon};
 
 const DELIMITER: u8 = b' ';
-const MAX_MATCHES: usize = 65536;
+const MAX_MATCHES: usize = 10000;
 
 struct State {
     node_pos: u32,

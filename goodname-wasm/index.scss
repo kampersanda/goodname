@@ -28,12 +28,8 @@ body {
   font-family: "Helvetica";
   width: calc(100% - 20px);
   margin: 10px;
-  list-style-type: square;
+  background-color: #F6F6F6;
 }
-
-// .header-link {
-//   text-align: right;
-// }
 
 a {
   color: #000;
@@ -66,4 +62,23 @@ input {
 .candidates {
   margin: 10px;
   padding: 0;
+}
+
+.candidates .nummatches {
+  padding: 10px;
+  font-weight: bold;
+}
+
+.toomany {
+  margin: 10px;
+  padding: 0;
+  color: #FF4B00;
+  font-weight: bold;
+}
+
+footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
 }

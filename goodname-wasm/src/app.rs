@@ -15,26 +15,48 @@ pub enum Msg {
     GenCandidates,
 }
 
+#[derive(Debug)]
+pub enum MatchCase {
+    NotYet,
+    Within,
+    Overflow,
+    TooMany,
+}
+
+impl Default for MatchCase {
+    fn default() -> Self {
+        Self::NotYet
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct App {
     text: String,
+    match_case: MatchCase,
     num_matched: usize,
-    candidates: Option<Vec<(String, usize)>>,
+    candidates: Vec<(String, usize)>,
 }
 
 impl App {
     fn gen_candidates(&mut self) {
         if self.text.is_empty() {
-            self.candidates = None;
+            self.candidates = vec![];
         } else {
-            let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text).unwrap();
-            self.num_matched = matched.len();
-            self.candidates = Some(
-                matched[..matched.len().min(100)]
+            let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text);
+            if let Ok(matched) = matched {
+                self.num_matched = matched.len();
+                if self.num_matched <= 100 {
+                    self.match_case = MatchCase::Within;
+                } else {
+                    self.match_case = MatchCase::Overflow;
+                }
+                self.candidates = matched[..matched.len().min(100)]
                     .iter()
                     .map(|m| (LEXICON.word(m.word_id).to_string(), m.score))
-                    .collect(),
-            );
+                    .collect();
+            } else {
+                self.match_case = MatchCase::TooMany;
+            }
         }
     }
 }
@@ -110,18 +132,35 @@ impl Component for App {
                         </button>
                     </div>
                     {
-                        if let Some(candidates) = candidates {
-                            html! {
+                        match self.match_case {
+                            MatchCase::NotYet => html! {},
+                            MatchCase::Within => html! {
                                 <div class="candidates">
-                                    {format!("#matched = {}", num_matched)}
+                                    <div class="nummatches">
+                                        {format!("#matches = {}", num_matched)}
+                                    </div>
                                     <CandView {candidates} />
                                 </div>
-                            }
-                        } else {
-                            html! {}
+                            },
+                            MatchCase::Overflow => html! {
+                                <div class="candidates">
+                                    <div class="nummatches">
+                                        {format!("#matches = {} (the top-100 candidates are printed)", num_matched)}
+                                    </div>
+                                    <CandView {candidates} />
+                                </div>
+                            },
+                            MatchCase::TooMany => html! {
+                                <div class="toomany">
+                                    {"The search was forcibly terminated because #matches was too many. Adjust the number by shortening the description or specifying more uppercase letters."}
+                                </div>
+                            },
                         }
                     }
                 </main>
+                <footer>
+                    {"© 2022 Shunsuke Kanda"}
+                </footer>
             </>
         }
     }
