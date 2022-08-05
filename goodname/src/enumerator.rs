@@ -12,15 +12,17 @@ struct State {
     node_pos: u32,
     text_pos: usize,
     score: usize,
+    positions: u64,
 }
 
 impl State {
     #[inline(always)]
-    const fn new(node_pos: u32, text_pos: usize, score: usize) -> Self {
+    const fn new(node_pos: u32, text_pos: usize, score: usize, positions: u64) -> Self {
         Self {
             node_pos,
             text_pos,
             score,
+            positions,
         }
     }
 }
@@ -29,6 +31,7 @@ impl State {
 pub struct Match {
     pub word_id: usize,
     pub score: usize,
+    pub positions: u64,
 }
 
 pub struct Enumerator<'a> {
@@ -40,6 +43,9 @@ pub struct Enumerator<'a> {
 impl<'a> Enumerator<'a> {
     pub fn all_subsequences(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
         let text = text.as_bytes();
+        if 64 <= text.len() {
+            return Err(anyhow!("the length of an input text must be less than 64."));
+        }
         let scores = Self::build_scores(text);
         let enumerator = Self {
             trie: lex.trie(),
@@ -47,7 +53,7 @@ impl<'a> Enumerator<'a> {
             scores,
         };
         let mut matched = HashMap::new();
-        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0), &mut matched)?;
+        enumerator.all_subsequences_recur(State::new(Trie::root_pos(), 0, 0, 0), &mut matched)?;
         Ok(matched.iter().map(|(_, &m)| m).collect())
     }
 
@@ -86,6 +92,7 @@ impl<'a> Enumerator<'a> {
             node_pos,
             text_pos,
             score,
+            positions,
         } = state;
 
         if text_pos == self.text.len() {
@@ -93,12 +100,20 @@ impl<'a> Enumerator<'a> {
                 matched
                     .entry(word_id)
                     .and_modify(|m| {
-                        m.word_id = m.word_id.max(word_id);
+                        debug_assert_eq!(m.word_id, word_id);
+                        if m.score < score {
+                            m.score = score;
+                            m.positions = positions;
+                        }
                     })
-                    .or_insert(Match { word_id, score });
+                    .or_insert(Match {
+                        word_id,
+                        score,
+                        positions,
+                    });
                 if MAX_MATCHES <= matched.len() {
                     return Err(anyhow!(
-                        "#matches is too many, exceeding {}. Please reconsider your input.",
+                        "#matches is too many, exceeding {}. Adjust the number by shortening the description or specifying more uppercase letters.",
                         MAX_MATCHES
                     ));
                 }
@@ -110,17 +125,40 @@ impl<'a> Enumerator<'a> {
 
         if !utils::is_upper_case(c) {
             // Allows an epsilon transition only for non upper letters.
-            self.all_subsequences_recur(State::new(node_pos, text_pos + 1, score), matched)?;
+            self.all_subsequences_recur(
+                State::new(node_pos, text_pos + 1, score, positions),
+                matched,
+            )?;
         }
 
-        if let Some(node_pos) = self.trie.get_child(node_pos, utils::to_lower_case(c)) {
+        if let Some(node_pos) = self
+            .trie
+            .get_child(node_pos, utils::to_lower_case(c).unwrap_or(c))
+        {
             self.all_subsequences_recur(
-                State::new(node_pos, text_pos + 1, score + self.scores[text_pos]),
+                State::new(
+                    node_pos,
+                    text_pos + 1,
+                    score + self.scores[text_pos],
+                    positions | (1 << text_pos),
+                ),
                 matched,
             )?;
         }
         Ok(())
     }
+}
+
+pub fn activate_positions(text: &str, m: &Match) -> String {
+    let mut bytes = text.as_bytes().to_vec();
+    for (i, c) in bytes.iter_mut().enumerate() {
+        if m.positions & (1 << i) != 0 {
+            *c = utils::to_upper_case(*c).unwrap_or(*c);
+        } else {
+            assert!(!utils::is_upper_case(*c));
+        }
+    }
+    String::from_utf8(bytes).unwrap()
 }
 
 #[cfg(test)]
@@ -138,10 +176,12 @@ mod tests {
             Match {
                 word_id: 1,
                 score: 31,
+                positions: 0b11111,
             }, // "abAaB"
             Match {
                 word_id: 3,
                 score: 13,
+                positions: 0b10110,
             }, // "bAB"
         ];
         assert_eq!(matched, expected);

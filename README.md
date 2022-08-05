@@ -22,13 +22,14 @@ Input a description of your method or software with the stdio, as follows.
 
 ```
 $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
-> Character wise Double array Dictionary
+Enter your text:
+Character wise Double array Dictionary
 Matched 10 candidates
-1: crawdad (score=2208)
-2: chided (score=2064)
-3: cheddar (score=1862)
-4: creeded (score=1684)
-5: cradled (score=1680)
+1: crawdad, ChaRActer Wise Double Array Dictionary (score=2656)
+2: chided, CHaracter wIse DoublE array Dictionary (score=2064)
+3: cheddar, CHaracter wisE Double array DictionARy (score=1862)
+4: carded, ChARacter wise DoublE array Dictionary (score=1744)
+5: creeded, ChaRactEr wisE DoublE array Dictionary (score=1684)
 ```
 
 Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
@@ -38,13 +39,14 @@ If you obtain too many or too few candidates, adjust the capitalization setting,
 
 ```
 $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
-> Character wise double array dictionary
+Enter your text:
+Character wise double array dictionary
 Matched 1047 candidates
-1: crawdad (score=2208)
-2: chresard (score=2116)
-3: chided (score=2064)
-4: cardita (score=1988)
-5: chawdron (score=1976)
+1: crawdad, ChaRActer Wise Double Array Dictionary (score=2656)
+2: chresard, CHaRactEr wiSe double ARray Dictionary (score=2244)
+3: chawdron, CHAracter Wise Double aRray dictiONary (score=2200)
+4: chadar, CHAracter wise Double ARray dictionary (score=2176)
+5: chawia, CHAracter WIse double Array dictionary (score=2176)
 ```
 
 The candidates are printed in score order.
@@ -58,13 +60,14 @@ If you replace space letters into other ones (e.g., hyphens), resulting scores w
 
 ```
 $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
-> Character-wise double-array dictionary
+Enter your text:
+Character-wise double-array dictionary
 Matched 1047 candidates
-1: chided (score=28932)
-2: cheddar (score=28769)
-3: charadrii (score=28688)
-4: chudic (score=28672)
-5: cradled (score=26880)
+1: chided, CHaracter-wIse DoublE-array Dictionary (score=28932)
+2: cheddar, CHaractEr-wise Double-array DictionARy (score=28832)
+3: charadrii, CHARActer-wise Double-aRray dIctIonary (score=28704)
+4: chudic, CHaracter-wise doUble-array DICtionary (score=28672)
+5: carded, ChARacter-wise DoublE-array Dictionary (score=27904)
 ```
 
 ## Complexity
