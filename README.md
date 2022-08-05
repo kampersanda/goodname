@@ -7,6 +7,10 @@ this tool enumerates name candidates forming subsequences of the description (i.
 For example, given description "Character-wise Double-array Dictionary" of your software,
 this tool will suggest some name candidates such as "crawdad" and "cheddar" that are contained in a word dictionary.
 
+## Web App
+
+This [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try this tool.
+
 ## CLI tool
 
 `goodname-cli` provides a CLI tool of Goodname.
@@ -65,14 +69,13 @@ Matched 1047 candidates
 
 ## Complexity
 
-Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$ in the worst case.
+Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$.
 To perform this enumeration in practical time, we generate subsequences on a trie and early prune those that are not candidates.
 Furthermore, if the number of candidates exceeds 10 000, the process will be forced to terminate.
 
 
 ## TODO
 
- - Add Web interface
  - Devise more reasonable scoring.
  - Prepare richer word dictionaries.
 
