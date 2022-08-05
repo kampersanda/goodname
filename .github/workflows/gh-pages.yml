@@ -1,0 +1,33 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+name: deploy
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install environment
+      run: |
+        rustup target add wasm32-unknown-unknown
+        cargo install trunk
+    - name: Build
+      working-directory: ./goodname-wasm
+      run: |
+        cp ../wordlist/words.txt ./src/
+        trunk build --release --public-url goodname
+    - name: Publish
+      run: cp -r ./goodname-wasm/dist/ ./public/
+    - uses: peaceiris/actions-gh-pages@v3
+      if: ${{ github.ref == 'refs/heads/main' }}
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        force_orphan: true

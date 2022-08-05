@@ -6,7 +6,7 @@ use crate::cand_view::CandView;
 use crate::text_input::TextInput;
 
 static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
-    let words = include_str!("../../wordlist/words.txt");
+    let words = include_str!("words.txt");
     Lexicon::new(words.split('\n').filter(|w| !w.is_empty())).unwrap()
 });
 
