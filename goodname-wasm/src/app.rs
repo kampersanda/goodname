@@ -7,7 +7,7 @@ use crate::text_input::TextInput;
 
 static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
     let words = include_str!("../../wordlist/words.txt");
-    Lexicon::new(words.split("\n").filter(|w| !w.is_empty())).unwrap()
+    Lexicon::new(words.split('\n').filter(|w| !w.is_empty())).unwrap()
 });
 
 pub enum Msg {

@@ -1,6 +1,6 @@
 use yew::{function_component, html, Properties};
 
-#[derive(Clone, PartialEq, Properties)]
+#[derive(Clone, PartialEq, Eq, Properties)]
 pub struct Props {
     pub candidates: Vec<(String, usize)>,
 }
