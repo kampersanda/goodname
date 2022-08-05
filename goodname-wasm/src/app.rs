@@ -40,6 +40,8 @@ pub struct App {
 impl App {
     fn gen_candidates(&mut self) {
         if self.text.is_empty() {
+            self.match_case = MatchCase::NotYet;
+            self.num_matched = 0;
             self.candidates = vec![];
         } else {
             let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text);
@@ -159,7 +161,7 @@ impl Component for App {
                     }
                 </main>
                 <footer>
-                    {"© 2022 Shunsuke Kanda"}
+                    {"© 2022 Shunsuke Kanda (Kampersanda)"}
                 </footer>
             </>
         }
