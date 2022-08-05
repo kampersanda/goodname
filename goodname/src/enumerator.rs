@@ -44,7 +44,7 @@ impl<'a> Enumerator<'a> {
     pub fn all_subsequences(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
         let text = text.as_bytes();
         if 64 <= text.len() {
-            return Err(anyhow!("The length of an input text must be less than 64."));
+            return Err(anyhow!("the length of an input text must be less than 64."));
         }
         let scores = Self::build_scores(text);
         let enumerator = Self {
@@ -113,7 +113,7 @@ impl<'a> Enumerator<'a> {
                     });
                 if MAX_MATCHES <= matched.len() {
                     return Err(anyhow!(
-                        "#matches is too many, exceeding {}. Please reconsider your input.",
+                        "#matches is too many, exceeding {}. Adjust the number by shortening the description or specifying more uppercase letters.",
                         MAX_MATCHES
                     ));
                 }

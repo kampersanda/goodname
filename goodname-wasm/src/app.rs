@@ -1,4 +1,4 @@
-use goodname::{Enumerator, Lexicon};
+use goodname::{activate_positions, Enumerator, Lexicon};
 use once_cell::sync::Lazy;
 use yew::prelude::*;
 
@@ -20,7 +20,7 @@ pub enum MatchCase {
     NotYet,
     Within,
     Overflow,
-    TooMany,
+    Error(String),
 }
 
 impl Default for MatchCase {
@@ -34,7 +34,7 @@ pub struct App {
     text: String,
     match_case: MatchCase,
     num_matched: usize,
-    candidates: Vec<(String, usize)>,
+    candidates: Vec<(String, String, usize)>,
 }
 
 impl App {
@@ -45,19 +45,28 @@ impl App {
             self.candidates = vec![];
         } else {
             let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text);
-            if let Ok(matched) = matched {
-                self.num_matched = matched.len();
-                if self.num_matched <= 100 {
-                    self.match_case = MatchCase::Within;
-                } else {
-                    self.match_case = MatchCase::Overflow;
+            match matched {
+                Ok(matched) => {
+                    self.num_matched = matched.len();
+                    if self.num_matched <= 100 {
+                        self.match_case = MatchCase::Within;
+                    } else {
+                        self.match_case = MatchCase::Overflow;
+                    }
+                    self.candidates = matched[..matched.len().min(100)]
+                        .iter()
+                        .map(|m| {
+                            (
+                                LEXICON.word(m.word_id).to_string(),
+                                activate_positions(&self.text, m),
+                                m.score,
+                            )
+                        })
+                        .collect();
                 }
-                self.candidates = matched[..matched.len().min(100)]
-                    .iter()
-                    .map(|m| (LEXICON.word(m.word_id).to_string(), m.score))
-                    .collect();
-            } else {
-                self.match_case = MatchCase::TooMany;
+                Err(e) => {
+                    self.match_case = MatchCase::Error(e.to_string());
+                }
             }
         }
     }
@@ -134,7 +143,7 @@ impl Component for App {
                         </button>
                     </div>
                     {
-                        match self.match_case {
+                        match &self.match_case {
                             MatchCase::NotYet => html! {},
                             MatchCase::Within => html! {
                                 <div class="candidates">
@@ -152,9 +161,9 @@ impl Component for App {
                                     <CandView {candidates} />
                                 </div>
                             },
-                            MatchCase::TooMany => html! {
-                                <div class="toomany">
-                                    {"The search was forcibly terminated because #matches was too many. Adjust the number by shortening the description or specifying more uppercase letters."}
+                            MatchCase::Error(e) => html! {
+                                <div class="error">
+                                    {format!("The search was forcibly terminated because {}", e)}
                                 </div>
                             },
                         }
