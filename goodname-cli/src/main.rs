@@ -1,11 +1,11 @@
 use std::error::Error;
 use std::fs::File;
-use std::io::{stdin, stdout, BufRead, BufReader, Write};
+use std::io::{stdin, BufRead, BufReader};
 use std::path::Path;
 use std::string::String;
 
-use goodname::Enumerator;
 use goodname::Lexicon;
+use goodname::{activate_positions, Enumerator};
 
 use clap::Parser;
 
@@ -23,9 +23,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let lex = Lexicon::new(load_lines(&args.wordlist_filename)?)?;
 
-    print!("> ");
-    stdout().flush().unwrap();
-
+    println!("Enter your text:");
     #[allow(clippy::significant_drop_in_scrutinee)]
     for line in stdin().lock().lines() {
         let line = line?;
@@ -33,10 +31,16 @@ fn main() -> Result<(), Box<dyn Error>> {
         println!("Matched {} candidates", matched.len());
         let k = args.topk.min(matched.len());
         for (i, m) in matched[..k].iter().enumerate() {
-            println!("{}: {} (score={})", i + 1, lex.word(m.word_id), m.score);
+            let formatted = activate_positions(&line, m);
+            println!(
+                "{}: {}, {} (score={})",
+                i + 1,
+                lex.word(m.word_id),
+                formatted,
+                m.score
+            );
         }
-        print!("> ");
-        stdout().flush().unwrap();
+        println!("Enter your text:");
     }
 
     Ok(())
