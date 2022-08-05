@@ -1,0 +1,84 @@
+h1 {
+  padding: 20px 10px;
+  color: #494949;
+}
+
+h2 {
+  color: #494949;
+}
+
+table {
+  border-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+table th {
+  border-bottom: solid 4px #ddd;
+  text-align: center;
+  padding: 10px;
+}
+
+table td {
+  border-bottom: solid 2px #ddd;
+  text-align: center;
+  padding: 10px;
+}
+
+body {
+  font-family: "Helvetica";
+  width: calc(100% - 20px);
+  margin: 10px;
+  background-color: #F6F6F6;
+}
+
+a {
+  color: #000;
+}
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+}
+
+.description {
+  margin: 10px;
+  padding: 0;
+}
+
+.entry {
+  margin: 10px;
+  padding: 0;
+}
+
+input {
+  font-family: "Helvetica";
+  font-size: 14pt;
+  width: calc(100% - 2px);
+  margin: 10px 0px;
+  padding: 0;
+  border: 1px solid #333;
+}
+
+.candidates {
+  margin: 10px;
+  padding: 0;
+}
+
+.candidates .nummatches {
+  padding: 10px;
+  font-weight: bold;
+}
+
+.toomany {
+  margin: 10px;
+  padding: 0;
+  color: #FF4B00;
+  font-weight: bold;
+}
+
+footer {
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
+  font-size: 12px;
+}

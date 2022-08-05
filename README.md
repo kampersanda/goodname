@@ -63,6 +63,13 @@ Matched 1047 candidates
 5: cradled (score=26880)
 ```
 
+## Complexity
+
+Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$ in the worst case.
+To perform this enumeration in practical time, we generate subsequences on a trie and early prune those that are not candidates.
+Furthermore, if the number of candidates exceeds 10 000, the process will be forced to terminate.
+
+
 ## TODO
 
  - Add Web interface

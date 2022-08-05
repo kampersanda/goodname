@@ -3,3 +3,6 @@ members = [
     "goodname",
     "goodname-cli",
 ]
+exclude = [
+    "goodname-wasm",
+]
