@@ -67,10 +67,38 @@ impl Component for App {
             <>
                 <header>
                     <h1>{"Goodname: Tool to assist you with cool naming of your methods and software"}</h1>
-                    <p class="header-link"><a href="https://github.com/kampersanda/goodname">{"[Project Page]"}</a></p>
                 </header>
                 <main>
+                    <div class="description">
+                        <div>
+                            <p class="header-link"><a href="https://github.com/kampersanda/goodname" target="_blank">{"[Project Page]"}</a></p>
+                        </div>
+                        <h2>{"What is this?"}</h2>
+                        <div>
+                            {"Given a brief description of your method or software, this tool enumerates name candidates forming subsequences of the description, i.e., "}
+                            <i>{"abbreviation."}</i>
+                        </div>
+                        <div>
+                            {"(e.g., \"Character wise double array dictionary\" ⇒ \"crawdad\", \"cheddar\", and so on.)"}
+                        </div>
+                        <h2>{"How to use?"}</h2>
+                        <div>
+                            {"Enter your description using only lowercase letters or spaces basically. Set UPPERCASE only for letters that you want to be always included in a name candidate."}
+                        </div>
+                        <div>
+                            {"(e.g., when entering \"Character wise Double array Dictionary\", subsequence ('C','D','D') is always included in the candidates.)"}
+                        </div>
+                        <h2>{"How to rank?"}</h2>
+                        <div>
+                            {"The name candidates are shown in score order. The scores are assigned based on the following ideas:"}
+                            <ul>
+                                <li>{"The more forward letters of each word in a description, the higher the score."}</li>
+                                <li>{"The more letters matched, the higher the score."}</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="entry">
+                        <h2>{"Let's try!"}</h2>
                         <div>
                             {"Enter a brief description of your method or software:"}
                         </div>

@@ -26,6 +26,6 @@ pub fn text_input(props: &Props) -> Html {
     });
 
     html! {
-        <input type="text" {value} {oninput} />
+        <input type="text" placeholder="e.g., Character wise double array dictionary" {value} {oninput} />
     }
 }

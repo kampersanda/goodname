@@ -1,55 +1,69 @@
-input {
-  font-family: monospace;
-  font-size: 14pt;
-  width: calc(100% - 2px);
-  margin: 10px 0 10px 0;
-  padding: 0;
-  border: 1px solid #333;
+h1 {
+  padding: 20px 10px;
+  color: #494949;
+}
+
+h2 {
+  color: #494949;
 }
 
 table {
-  border: 1px solid #000;
+  border-spacing: 0;
   overflow-wrap: anywhere;
-  white-space: pre-wrap;
 }
 
-td {
-  border: 1px solid #000;
+table th {
+  border-bottom: solid 4px #ddd;
+  text-align: center;
+  padding: 10px;
 }
 
-thead,
-tfoot {
-  background-color: #000;
-  color: #fff;
+table td {
+  border-bottom: solid 2px #ddd;
+  text-align: center;
+  padding: 10px;
 }
 
 body {
+  font-family: "Helvetica";
   width: calc(100% - 20px);
   margin: 10px;
-  font-family: monospace;
+  list-style-type: square;
 }
 
-.header-link {
-  text-align: right;
-}
+// .header-link {
+//   text-align: right;
+// }
 
 a {
   color: #000;
 }
 
-// button {
-//   background-color: #008f53;
-//   /* Green */
-//   border: 1px;
-//   color: white;
-//   padding: 14px 14px;
-//   text-align: center;
-//   font-size: 16px;
-//   margin: 2px 2px;
-//   width: 100px;
-// }
-
 .footer {
   text-align: center;
   font-size: 12px;
+}
+
+.description {
+  margin: 10px;
+  padding: 0;
+}
+
+.entry {
+  margin: 10px;
+  padding: 0;
+}
+
+input {
+  font-family: "Helvetica";
+  font-size: 14pt;
+  width: calc(100% - 2px);
+  margin: 10px 0px;
+  padding: 0;
+  border: 1px solid #333;
+}
+
+.candidates {
+  margin: 10px;
+  padding: 0;
 }

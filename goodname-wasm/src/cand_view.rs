@@ -13,9 +13,9 @@ pub fn cand_view(props: &Props) -> Html {
         <table>
             <thead>
                 <tr>
-                    <td>{"Rank"}</td>
-                    <td>{"Candidate"}</td>
-                    <td>{"Score"}</td>
+                    <th>{"Rank"}</th>
+                    <th>{"Candidate"}</th>
+                    <th>{"Score"}</th>
                 </tr>
             </thead>
             <tbody>
