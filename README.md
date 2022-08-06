@@ -11,6 +11,8 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar" that
 
 [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try this tool.
 
+![](./movies/demo.gif)
+
 ## CLI tool
 
 `goodname-cli` provides a CLI tool of Goodname.
