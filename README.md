@@ -5,7 +5,7 @@ Given a brief description of your method or software,
 this tool enumerates name candidates forming subsequences of the description (i.e., *abbreviation*).
 
 For example, given description "Character-wise Double-array Dictionary" of your software,
-this tool will suggest some name candidates such as "crawdad" and "cheddar" that are contained in a word dictionary.
+this tool will suggest some name candidates such as "crawdad" and "cheddar".
 
 ## Web App
 
