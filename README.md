@@ -11,6 +11,8 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar" that
 
 [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try this tool.
 
+![](./movies/demo.gif)
+
 ## CLI tool
 
 `goodname-cli` provides a CLI tool of Goodname.
@@ -70,11 +72,21 @@ Matched 1047 candidates
 5: carded, ChARacter-wise DoublE-array Dictionary (score=27904)
 ```
 
+## Scoring
+
+Given a text $T$ and a set of positions $\{ i_1, i_2, \dots, i_m \}$ of $T$ such that $T[i_j]$ is not a space,
+we define the score of the subsequence $T[i_1] T[i_2] \dots T[i_m]$ as
+
+$$ \sum_{j \in [1,m]} 2^{\ell_{\max} - d(i_j)}, $$
+
+where $\ell_{\max}$ is the maximum length of a word obtained by separating $T$ with a space, and
+$d(i)$ is the distance from $T[i]$ to its preceding space (assuming $T[-1]$ is a space).
+
 ## Complexity
 
 Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$.
 To perform this enumeration in practical time, we generate subsequences on a trie and early prune those that are not candidates.
-Furthermore, if the number of candidates exceeds 10 000, the process will be forced to terminate.
+Furthermore, if the number of candidates exceeds 10k, the process will be forced to terminate.
 
 
 ## TODO
