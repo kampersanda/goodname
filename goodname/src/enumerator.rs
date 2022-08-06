@@ -12,12 +12,12 @@ struct State {
     node_pos: u32,
     text_pos: usize,
     score: usize,
-    positions: u64,
+    positions: u128,
 }
 
 impl State {
     #[inline(always)]
-    const fn new(node_pos: u32, text_pos: usize, score: usize, positions: u64) -> Self {
+    const fn new(node_pos: u32, text_pos: usize, score: usize, positions: u128) -> Self {
         Self {
             node_pos,
             text_pos,
@@ -31,7 +31,7 @@ impl State {
 pub struct Match {
     pub word_id: usize,
     pub score: usize,
-    pub positions: u64,
+    pub positions: u128,
 }
 
 pub struct Enumerator<'a> {
@@ -43,8 +43,10 @@ pub struct Enumerator<'a> {
 impl<'a> Enumerator<'a> {
     pub fn all_subsequences(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
         let text = text.as_bytes();
-        if 64 <= text.len() {
-            return Err(anyhow!("the length of an input text must be less than 64."));
+        if 128 <= text.len() {
+            return Err(anyhow!(
+                "the length of an input text must be less than 128."
+            ));
         }
         let scores = Self::build_scores(text);
         let enumerator = Self {
