@@ -76,7 +76,9 @@ Matched 1047 candidates
 
 Given a text $T$ and a set of positions $\{ i_1, i_2, \dots, i_m \}$ of $T$ (such that $T[i_j]$ is not a space),
 we define the score of the subsequence $T[i_1] T[i_2] \dots T[i_m]$ as
+
 $$ Score(T,S) := \sum_{j \in [1,m]} 2^{\ell_{\max} - d(i_j)}, $$
+
 where $\ell_{\max}$ is the maximum length of a word obtained by separating $T$ with a space, and
 $d(i)$ is the distance from $T[i]$ to its preceding space (assuming $T[-1]$ is a space).
 
