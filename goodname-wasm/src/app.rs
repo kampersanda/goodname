@@ -156,7 +156,7 @@ impl Component for App {
                             MatchCase::Overflow => html! {
                                 <div class="candidates">
                                     <div class="nummatches">
-                                        {format!("#matches = {} (the top-100 candidates are printed)", num_matched)}
+                                        {format!("#matches = {} (Only the top-100 candidates are printed.)", num_matched)}
                                     </div>
                                     <CandView {candidates} />
                                 </div>

@@ -35,7 +35,7 @@ Matched 10 candidates
 Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
 In the above example, subsequence ('C', 'D', 'D') is always contained in the candidates.
 
-If you obtain too many or too few candidates, adjust the capitalization setting, as follows.
+If you obtain too many or too few candidates, adjust the lettercase setting, as follows.
 
 ```
 $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
