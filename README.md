@@ -27,11 +27,11 @@ $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
 Enter your text:
 Character wise Double array Dictionary
 Matched 10 candidates
-1: crawdad, ChaRActer Wise Double Array Dictionary (score=2656)
-2: chided, CHaracter wIse DoublE array Dictionary (score=2064)
-3: cheddar, CHaracter wisE Double array DictionARy (score=1862)
-4: carded, ChARacter wise DoublE array Dictionary (score=1744)
-5: creeded, ChaRactEr wisE DoublE array Dictionary (score=1684)
+   1 crawdad: ChaRActer Wise Double Array Dictionary (score=2656)
+   2 chided: CHaracter wIse DoublE array Dictionary (score=2064)
+   3 cheddar: CHaracter wisE Double array DictionARy (score=1862)
+   4 carded: ChARacter wise DoublE array Dictionary (score=1744)
+   5 creeded: ChaRactEr wisE DoublE array Dictionary (score=1684)
 ```
 
 Set upper-case letters in the input description so that an output candidate always contains the subsequence consisting of those letters.
@@ -44,11 +44,11 @@ $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
 Enter your text:
 Character wise double array dictionary
 Matched 1047 candidates
-1: crawdad, ChaRActer Wise Double Array Dictionary (score=2656)
-2: chresard, CHaRactEr wiSe double ARray Dictionary (score=2244)
-3: chawdron, CHAracter Wise Double aRray dictiONary (score=2200)
-4: chadar, CHAracter wise Double ARray dictionary (score=2176)
-5: chawia, CHAracter WIse double Array dictionary (score=2176)
+   1 crawdad: ChaRActer Wise Double Array Dictionary (score=2656)
+   2 chresard: CHaRactEr wiSe double ARray Dictionary (score=2244)
+   3 chawdron: CHAracter Wise Double aRray dictiONary (score=2200)
+   4 chadar: CHAracter wise Double ARray dictionary (score=2176)
+   5 chawia: CHAracter WIse double Array dictionary (score=2176)
 ```
 
 The candidates are printed in score order.
@@ -65,11 +65,11 @@ $ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5
 Enter your text:
 Character-wise double-array dictionary
 Matched 1047 candidates
-1: chided, CHaracter-wIse DoublE-array Dictionary (score=28932)
-2: cheddar, CHaractEr-wise Double-array DictionARy (score=28832)
-3: charadrii, CHARActer-wise Double-aRray dIctIonary (score=28704)
-4: chudic, CHaracter-wise doUble-array DICtionary (score=28672)
-5: carded, ChARacter-wise DoublE-array Dictionary (score=27904)
+   1 chided: CHaracter-wIse DoublE-array Dictionary (score=28932)
+   2 cheddar: CHaractEr-wise Double-array DictionARy (score=28832)
+   3 charadrii: CHARActer-wise Double-aRray dIctIonary (score=28704)
+   4 chudic: CHaracter-wise doUble-array DICtionary (score=28672)
+   5 carded: ChARacter-wise DoublE-array Dictionary (score=27904)
 ```
 
 ## Scoring

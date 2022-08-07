@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         for (i, m) in matched[..k].iter().enumerate() {
             let formatted = activate_positions(&line, m);
             println!(
-                "{}: {}, {} (score={})",
+                "{:>4} {}: {} (score={})",
                 i + 1,
                 lex.word(m.word_id),
                 formatted,

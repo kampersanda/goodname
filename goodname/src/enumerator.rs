@@ -61,7 +61,11 @@ impl<'a> Enumerator<'a> {
 
     pub fn all_subsequences_sorted(lex: &'a Lexicon, text: &'a str) -> Result<Vec<Match>> {
         let mut matched = Self::all_subsequences(lex, text)?;
-        matched.sort_by_key(|m| std::cmp::Reverse(m.score));
+        matched.sort_by(|m1, m2| {
+            m2.score
+                .cmp(&m1.score)
+                .then_with(|| m1.word_id.cmp(&m2.word_id))
+        });
         Ok(matched)
     }
 
