@@ -21,6 +21,7 @@ pub enum Msg {
 #[derive(Debug)]
 pub enum MatchCase {
     NotYet,
+    NotMatch,
     Within,
     Overflow,
     Error(String),
@@ -74,7 +75,9 @@ impl App {
         let enumerator = enumerator.prefix_len(self.prefix_len.parse()?)?;
         let matched = enumerator.all_subsequences()?;
         self.num_matched = matched.len();
-        if self.num_matched <= 100 {
+        if self.num_matched == 0 {
+            self.match_case = MatchCase::NotMatch;
+        } else if self.num_matched <= 100 {
             self.match_case = MatchCase::Within;
         } else {
             self.match_case = MatchCase::Overflow;
@@ -125,7 +128,7 @@ impl Component for App {
                         <h2>{"What is this?"}</h2>
                         <div>
                             {"Given a brief description of your method or software, this tool enumerates name candidates forming subsequences of the description, i.e., "}
-                            <i>{"abbreviation."}</i>
+                            <i>{"acronym."}</i>
                         </div>
                         <div>
                             {"(e.g., \"Character wise double array dictionary\" ⇒ \"crawdad\", \"cheddar\", and so on.)"}
@@ -155,7 +158,7 @@ impl Component for App {
                             <TextInput on_change={ctx.link().callback(Msg::SetText)} value={self.text.clone()} name="yourdesc" />
                         </div>
                         <div>
-                            {format!("Set the maximum number of don't care prefix letters: ")}
+                            {format!("Set the maximum number of possible prefix letters for recursive acronym: ")}
                         </div>
                             <label class="range" for="prefix">{self.prefix_len.clone()}</label>
                             <RangeInput on_change={ctx.link().callback(Msg::SetPrefixLen)} value={self.prefix_len.clone()} name="prefix" />
@@ -170,6 +173,12 @@ impl Component for App {
                     {
                         match &self.match_case {
                             MatchCase::NotYet => html! {},
+                            MatchCase::NotMatch => html! {
+                                <div class="candidates" style="font-weight:bold">
+                                    <div>{format!("No candidates were found :(")}</div>
+                                    <div>{format!("Edit your input, such as setting more lowercase letters or a larger number for recursive acronym.")}</div>
+                                </div>
+                            },
                             MatchCase::Within => html! {
                                 <div class="candidates">
                                     <div class="nummatches">
