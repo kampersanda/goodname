@@ -236,6 +236,7 @@ impl<'a> Enumerator<'a> {
         Ok(())
     }
 
+    /// Returns the formatted name candidate and description.
     pub fn format_match(&self, m: &Match) -> (String, String) {
         let word = {
             let word = self.lex.word(m.word_id);
