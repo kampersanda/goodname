@@ -1,5 +1,10 @@
 # Goodname
 
+![](https://github.com/kampersanda/goodname/actions/workflows/rust.yml/badge.svg)
+[![Documentation](https://docs.rs/goodname/badge.svg)](https://docs.rs/goodname)
+[![Crates.io](https://img.shields.io/crates/v/goodname.svg)](https://crates.io/crates/goodname)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/kampersanda/goodname/blob/master/LICENSE)
+
 Goodname is a tool to assist you with cool naming of your methods and software.
 Given a brief description of your method or software,
 this tool enumerates name candidates forming subsequences of the description (i.e., *acronym*).

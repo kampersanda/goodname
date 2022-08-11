@@ -1,7 +1,15 @@
 [package]
 name = "goodname"
-version = "0.1.0"
+version = "0.2.1"
 edition = "2021"
+authors = ["Shunsuke Kanda <shnsk.knd@gmail.com>"]
+description = "Goodname: Tool to assist you with cool naming of your methods and software"
+license = "MIT"
+homepage = "https://github.com/kampersanda/goodname"
+repository = "https://github.com/kampersanda/goodname"
+readme = "README.md"
+keywords = ["acronym"]
+categories = ["text-processing"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
