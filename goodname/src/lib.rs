@@ -13,35 +13,26 @@
 //! let lex = Lexicon::new(words).unwrap();
 //! let text = "abAaB";
 //!
-//! let matched = Enumerator::new(&lex, text)
-//!     .unwrap()
-//!     .prefix_len(1)
-//!     .unwrap()
-//!     .all_subsequences()
-//!     .unwrap();
+//! let enumerator = Enumerator::new(&lex, text).unwrap().prefix_len(2).unwrap();
+//! let matched = enumerator.all_subsequences().unwrap();
 //!
-//! let expected = vec![
-//!     Match {
-//!         word_id: 1,
-//!         score: 31,
-//!         positions: 0b11111,
-//!         prefix: "".to_string(),
-//!     }, // "abAaB"
-//!     Match {
-//!         word_id: 3,
-//!         score: 13,
-//!         positions: 0b10110,
-//!         prefix: "".to_string(),
-//!     }, // "bAB"
-//!     Match {
-//!         word_id: 6,
-//!         score: 13,
-//!         positions: 0b10110,
-//!         prefix: "c".to_string(),
-//!     }, // "c|bAB"
-//! ];
-//!
-//! assert_eq!(matched, expected);
+//! assert_eq!(matched.len(), 4);
+//! assert_eq!(
+//!     enumerator.format_match(&matched[0]),
+//!     ("abaab".to_string(), "ABAAB".to_string())
+//! );
+//! assert_eq!(
+//!     enumerator.format_match(&matched[1]),
+//!     ("bab".to_string(), "aBAaB".to_string())
+//! );
+//! assert_eq!(
+//!     enumerator.format_match(&matched[2]),
+//!     ("Cbab".to_string(), "aBAaB".to_string())
+//! );
+//! assert_eq!(
+//!     enumerator.format_match(&matched[3]),
+//!     ("CCbab".to_string(), "aBAaB".to_string())
+//! );
 //! ```
 mod enumerator;
 mod lexicon;

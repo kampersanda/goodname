@@ -272,10 +272,8 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::new(&lex, text)
-            .unwrap()
-            .all_subsequences()
-            .unwrap();
+        let enumerator = Enumerator::new(&lex, text).unwrap();
+        let matched = enumerator.all_subsequences().unwrap();
         let expected = vec![
             Match {
                 word_id: 1,
@@ -290,7 +288,16 @@ mod tests {
                 prefix: "".to_string(),
             }, // "bAB"
         ];
-        assert_eq!(matched, expected);
+        assert_eq!(&matched, &expected);
+
+        assert_eq!(
+            enumerator.format_match(&matched[0]),
+            ("abaab".to_string(), "ABAAB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[1]),
+            ("bab".to_string(), "aBAaB".to_string())
+        );
     }
 
     #[test]
@@ -299,12 +306,8 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::new(&lex, text)
-            .unwrap()
-            .prefix_len(1)
-            .unwrap()
-            .all_subsequences()
-            .unwrap();
+        let enumerator = Enumerator::new(&lex, text).unwrap().prefix_len(1).unwrap();
+        let matched = enumerator.all_subsequences().unwrap();
         let expected = vec![
             Match {
                 word_id: 1,
@@ -326,6 +329,19 @@ mod tests {
             }, // "c|bAB"
         ];
         assert_eq!(matched, expected);
+
+        assert_eq!(
+            enumerator.format_match(&matched[0]),
+            ("abaab".to_string(), "ABAAB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[1]),
+            ("bab".to_string(), "aBAaB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[2]),
+            ("Cbab".to_string(), "aBAaB".to_string())
+        );
     }
 
     #[test]
@@ -334,12 +350,8 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::new(&lex, text)
-            .unwrap()
-            .prefix_len(2)
-            .unwrap()
-            .all_subsequences()
-            .unwrap();
+        let enumerator = Enumerator::new(&lex, text).unwrap().prefix_len(2).unwrap();
+        let matched = enumerator.all_subsequences().unwrap();
         let expected = vec![
             Match {
                 word_id: 1,
@@ -367,6 +379,23 @@ mod tests {
             }, // "cc|bAB"
         ];
         assert_eq!(matched, expected);
+
+        assert_eq!(
+            enumerator.format_match(&matched[0]),
+            ("abaab".to_string(), "ABAAB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[1]),
+            ("bab".to_string(), "aBAaB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[2]),
+            ("Cbab".to_string(), "aBAaB".to_string())
+        );
+        assert_eq!(
+            enumerator.format_match(&matched[3]),
+            ("CCbab".to_string(), "aBAaB".to_string())
+        );
     }
 
     #[test]
