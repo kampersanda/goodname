@@ -55,7 +55,7 @@ input[name="yourdesc"] {
   font-size: 14pt;
   width: calc(100% - 2px);
   margin: 10px 0px;
-  padding: 0;
+  padding: 5px;
   border: 1px solid #333;
 }
 
@@ -85,6 +85,7 @@ input[name="prefix"] {
 button {
   margin: 10px 0px;
   padding: 5px 10px;
+  font-weight: bold;
   cursor: pointer;
 }
 
