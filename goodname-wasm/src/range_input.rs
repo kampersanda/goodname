@@ -17,9 +17,9 @@ fn get_value_from_input_event(e: InputEvent) -> String {
     target.value()
 }
 
-/// Controlled Text Input Component
-#[function_component(TextInput)]
-pub fn text_input(props: &Props) -> Html {
+/// Controlled Range Input Component
+#[function_component(RangeInput)]
+pub fn range_input(props: &Props) -> Html {
     let Props {
         value,
         on_change,
@@ -31,6 +31,6 @@ pub fn text_input(props: &Props) -> Html {
     });
 
     html! {
-        <input type="text" name={name} placeholder="e.g., Character wise double array dictionary" {value} {oninput} />
+        <input type="range" id={name.clone()} name={name.clone()} min="0" max="3" {value} {oninput} />
     }
 }

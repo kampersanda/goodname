@@ -50,7 +50,7 @@ a {
   padding: 0;
 }
 
-input {
+input[name="yourdesc"] {
   font-family: "Helvetica";
   font-size: 14pt;
   width: calc(100% - 2px);
@@ -59,13 +59,33 @@ input {
   border: 1px solid #333;
 }
 
+input[name="prefix"] {
+  width: 150px;
+  margin: 10px 0px;
+}
+
+.range {
+  margin: 0px 15px 0px 0px;
+  font-weight: bold;
+  border: 1px solid #333;
+  background-color: #FFF;
+  padding: 5px 10px;
+  color: #494949;
+}
+
+button {
+  margin: 10px 0px;
+  padding: 5px;
+  cursor: pointer;
+}
+
 .candidates {
   margin: 10px;
   padding: 0;
 }
 
 .candidates .nummatches {
-  padding: 10px;
+  margin: 10px;
   font-weight: bold;
 }
 

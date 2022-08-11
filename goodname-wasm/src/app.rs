@@ -4,6 +4,7 @@ use once_cell::sync::Lazy;
 use yew::prelude::*;
 
 use crate::cand_view::CandView;
+use crate::range_input::RangeInput;
 use crate::text_input::TextInput;
 
 static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
@@ -13,6 +14,7 @@ static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
 
 pub enum Msg {
     SetText(String),
+    SetPrefixLen(String),
     GenCandidates,
 }
 
@@ -30,12 +32,25 @@ impl Default for MatchCase {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     text: String,
+    prefix_len: String,
     match_case: MatchCase,
     num_matched: usize,
     candidates: Vec<(String, String, usize)>,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            text: "".to_string(),
+            prefix_len: "0".to_string(),
+            match_case: MatchCase::NotYet,
+            num_matched: 0,
+            candidates: vec![],
+        }
+    }
 }
 
 impl App {
@@ -56,6 +71,7 @@ impl App {
 
     fn enumurate(&mut self) -> Result<()> {
         let enumerator = Enumerator::init(&LEXICON, &self.text)?;
+        let enumerator = enumerator.prefix_len(self.prefix_len.parse()?)?;
         let matched = enumerator.all_subsequences()?;
         self.num_matched = matched.len();
         if self.num_matched <= 100 {
@@ -86,15 +102,13 @@ impl Component for App {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::SetText(text) => self.text = text,
+            Msg::SetPrefixLen(prefix_len) => self.prefix_len = prefix_len,
             Msg::GenCandidates => self.gen_candidates(),
         };
         true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let on_change = ctx.link().callback(Msg::SetText);
-        let onclick = ctx.link().callback(|_| Msg::GenCandidates);
-
         let num_matched = self.num_matched;
         let candidates = self.candidates.clone();
 
@@ -138,11 +152,20 @@ impl Component for App {
                             {"Enter a brief description of your method or software:"}
                         </div>
                         <div>
-                            <TextInput {on_change} value={self.text.clone()} />
+                            <TextInput on_change={ctx.link().callback(Msg::SetText)} value={self.text.clone()} name="yourdesc" />
                         </div>
-                        <button {onclick}>
-                            {"Search"}
-                        </button>
+                        <div>
+                            {format!("Set the maximum number of don't care prefix letters: ")}
+                        </div>
+                            <label class="range" for="prefix">{self.prefix_len.clone()}</label>
+                            <RangeInput on_change={ctx.link().callback(Msg::SetPrefixLen)} value={self.prefix_len.clone()} name="prefix" />
+                        <div>
+                        </div>
+                        <div>
+                            <button onclick={ctx.link().callback(|_| Msg::GenCandidates)}>
+                                {"Search"}
+                            </button>
+                        </div>
                     </div>
                     {
                         match &self.match_case {
