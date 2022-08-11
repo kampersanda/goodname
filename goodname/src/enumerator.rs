@@ -42,14 +42,6 @@ impl Prefix {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct Match {
-    pub word_id: usize,
-    pub score: usize,
-    pub positions: u128,
-    pub prefix: String,
-}
-
 struct State {
     node_pos: u32,
     text_pos: usize,
@@ -77,6 +69,20 @@ impl State {
     }
 }
 
+/// A resultant candidate.
+#[derive(Clone, PartialEq, Eq, Debug)]
+pub struct Match {
+    /// The word identifier assigned by [`Lexicon`].
+    pub word_id: usize,
+    /// The goodnamely score.
+    pub score: usize,
+    /// The set of positions where the letters are active.
+    pub positions: u128,
+    /// The prefix letters for recursive acronym.
+    pub prefix: String,
+}
+
+/// Enumerator of name candidates that are acronyms of an input text.
 pub struct Enumerator<'a> {
     lex: &'a Lexicon,
     text: &'a [u8],
@@ -85,7 +91,8 @@ pub struct Enumerator<'a> {
 }
 
 impl<'a> Enumerator<'a> {
-    pub fn init(lex: &'a Lexicon, text: &'a str) -> Result<Self> {
+    /// Creates an instance.
+    pub fn new(lex: &'a Lexicon, text: &'a str) -> Result<Self> {
         let text = text.as_bytes();
         if 128 <= text.len() {
             return Err(anyhow!(
@@ -102,6 +109,7 @@ impl<'a> Enumerator<'a> {
         Ok(enumerator)
     }
 
+    /// Specifies the maximum number of arbitrary prefix letters to allow for generating recursive acronyms.
     pub fn prefix_len(mut self, prefix_len: usize) -> Result<Self> {
         if MAX_PREFIX_LEN < prefix_len {
             return Err(anyhow!(
@@ -113,6 +121,7 @@ impl<'a> Enumerator<'a> {
         Ok(self)
     }
 
+    /// Generates name candidates.
     pub fn all_subsequences(&self) -> Result<Vec<Match>> {
         let mut matched = HashMap::new();
         self.all_subsequences_recur(
@@ -262,7 +271,7 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::init(&lex, text)
+        let matched = Enumerator::new(&lex, text)
             .unwrap()
             .all_subsequences()
             .unwrap();
@@ -289,7 +298,7 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::init(&lex, text)
+        let matched = Enumerator::new(&lex, text)
             .unwrap()
             .prefix_len(1)
             .unwrap()
@@ -324,7 +333,7 @@ mod tests {
         let lex = Lexicon::new(words).unwrap();
         let text = "abAaB";
 
-        let matched = Enumerator::init(&lex, text)
+        let matched = Enumerator::new(&lex, text)
             .unwrap()
             .prefix_len(2)
             .unwrap()

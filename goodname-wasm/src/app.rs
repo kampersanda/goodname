@@ -71,7 +71,7 @@ impl App {
     }
 
     fn enumurate(&mut self) -> Result<()> {
-        let enumerator = Enumerator::init(&LEXICON, &self.text)?;
+        let enumerator = Enumerator::new(&LEXICON, &self.text)?;
         let enumerator = enumerator.prefix_len(self.prefix_len.parse()?)?;
         let matched = enumerator.all_subsequences()?;
         self.num_matched = matched.len();
