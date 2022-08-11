@@ -33,7 +33,7 @@ impl Prefix {
     }
 
     #[inline(always)]
-    fn to_string(&self) -> String {
+    fn string(&self) -> String {
         let buf: Vec<_> = self.0[..self.len()]
             .iter()
             .map(|&c| c.unwrap().get())
@@ -183,14 +183,14 @@ impl<'a> Enumerator<'a> {
                         if m.score < score {
                             m.score = score;
                             m.positions = positions;
-                            m.prefix = prefix.to_string();
+                            m.prefix = prefix.string();
                         }
                     })
                     .or_insert(Match {
                         word_id,
                         score,
                         positions,
-                        prefix: prefix.to_string(),
+                        prefix: prefix.string(),
                     });
                 if MAX_MATCHES <= matched.len() {
                     return Err(anyhow!(
@@ -375,6 +375,6 @@ mod tests {
         prefix = prefix.push(b'b');
         prefix = prefix.push(b'c');
         assert_eq!(prefix.len(), 3);
-        assert_eq!(prefix.to_string(), "abc");
+        assert_eq!(prefix.string(), "abc");
     }
 }
