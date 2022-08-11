@@ -135,7 +135,7 @@ impl Component for App {
                         </div>
                         <h2>{"How to use?"}</h2>
                         <div>
-                            {"Enter your description using only lowercase letters or spaces basically. Set UPPERCASE only for letters that you want to be always included in a name candidate."}
+                            {"Enter your description using only lowercase letters or a space basically. Set UPPERCASE only for letters that you want to be always included in a name candidate."}
                         </div>
                         <div>
                             {"(e.g., when entering \"Character wise Double array Dictionary\", subsequence ('C','D','D') is always included in the candidates.)"}
@@ -158,7 +158,7 @@ impl Component for App {
                             <TextInput on_change={ctx.link().callback(Msg::SetText)} value={self.text.clone()} name="yourdesc" />
                         </div>
                         <div>
-                            {format!("Set the maximum number of possible prefix letters for recursive acronym: ")}
+                            {format!("Set the maximum number of arbitrary prefix letters to allow for generating recursive acronyms: ")}
                         </div>
                             <label class="range" for="prefix">{self.prefix_len.clone()}</label>
                             <RangeInput on_change={ctx.link().callback(Msg::SetPrefixLen)} value={self.prefix_len.clone()} name="prefix" />
