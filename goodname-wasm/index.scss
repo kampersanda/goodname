@@ -75,6 +75,7 @@ input[name="prefix"] {
 
 .cand-name {
   text-align: center;
+  font-weight: bold;
 }
 
 .cand-desc {
@@ -83,7 +84,7 @@ input[name="prefix"] {
 
 button {
   margin: 10px 0px;
-  padding: 5px;
+  padding: 5px 10px;
   cursor: pointer;
 }
 
