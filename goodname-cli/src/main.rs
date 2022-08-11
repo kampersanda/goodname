@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     #[allow(clippy::significant_drop_in_scrutinee)]
     for line in stdin().lock().lines() {
         let line = line?;
-        let enumerator = Enumerator::init(&lex, &line)?.prefix_len(prefix_len)?;
+        let enumerator = Enumerator::new(&lex, &line)?.prefix_len(prefix_len)?;
         let matched = enumerator.all_subsequences()?;
         println!("Matched {} candidates", matched.len());
         let k = args.topk.min(matched.len());
