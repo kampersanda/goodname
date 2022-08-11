@@ -1,4 +1,5 @@
-use goodname::{activate_positions, Enumerator, Lexicon};
+use anyhow::Result;
+use goodname::{Enumerator, Lexicon};
 use once_cell::sync::Lazy;
 use yew::prelude::*;
 
@@ -43,32 +44,33 @@ impl App {
             self.match_case = MatchCase::NotYet;
             self.num_matched = 0;
             self.candidates = vec![];
-        } else {
-            let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text);
-            match matched {
-                Ok(matched) => {
-                    self.num_matched = matched.len();
-                    if self.num_matched <= 100 {
-                        self.match_case = MatchCase::Within;
-                    } else {
-                        self.match_case = MatchCase::Overflow;
-                    }
-                    self.candidates = matched[..matched.len().min(100)]
-                        .iter()
-                        .map(|m| {
-                            (
-                                LEXICON.word(m.word_id).to_string(),
-                                activate_positions(&self.text, m),
-                                m.score,
-                            )
-                        })
-                        .collect();
-                }
-                Err(e) => {
-                    self.match_case = MatchCase::Error(e.to_string());
-                }
+            return;
+        }
+        match self.enumurate() {
+            Ok(_) => {}
+            Err(e) => {
+                self.match_case = MatchCase::Error(e.to_string());
             }
         }
+    }
+
+    fn enumurate(&mut self) -> Result<()> {
+        let enumerator = Enumerator::init(&LEXICON, &self.text)?;
+        let matched = enumerator.all_subsequences()?;
+        self.num_matched = matched.len();
+        if self.num_matched <= 100 {
+            self.match_case = MatchCase::Within;
+        } else {
+            self.match_case = MatchCase::Overflow;
+        }
+        self.candidates = matched[..matched.len().min(100)]
+            .iter()
+            .map(|m| {
+                let (word, desc) = enumerator.format_match(m);
+                (word, desc, m.score)
+            })
+            .collect();
+        Ok(())
     }
 }
 
