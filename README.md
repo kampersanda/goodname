@@ -20,7 +20,7 @@ The [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try
 The arguments are
 - `-w`: Input word list (must be sorted, be unique, and include no upper-case letters), and
 - `-k`: Top-k to print (default=`30`).
-- `-p`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=`0`, must be in `0..=3`).
+- `-l`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=`0`, must be in `0..=3`).
 
 Enter your description using only lowercase letters or a space basically.
 Set UPPERCASE only for letters that you want to be always included in a name candidate.
@@ -55,7 +55,7 @@ Matched 1047 candidates
 Or, you can specify the maximum number of arbitrary prefix letters to allow for generating recursive acronyms.
 
 ```
-$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5 -p 2
+$ cargo run --release -p goodname-cli -- -w wordlist/words.txt -k 5 -l 2
 Enter your text:
 Character wise Double array Dictionary
 Matched 25 candidates

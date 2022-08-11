@@ -15,11 +15,11 @@ struct Args {
     #[clap(short = 'w', action)]
     wordlist_filename: String,
 
-    #[clap(short = 'p', action, default_value = "0")]
-    prefix_len: usize,
-
     #[clap(short = 'k', action, default_value = "30")]
     topk: usize,
+
+    #[clap(short = 'l', action, default_value = "0")]
+    prefix_len: usize,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
