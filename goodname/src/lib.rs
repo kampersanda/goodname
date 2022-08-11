@@ -3,5 +3,5 @@ pub mod lexicon;
 mod trie;
 mod utils;
 
-pub use enumerator::{activate_positions, Enumerator};
+pub use enumerator::{Enumerator, Match};
 pub use lexicon::Lexicon;

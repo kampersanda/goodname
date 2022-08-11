@@ -14,8 +14,8 @@ pub fn cand_view(props: &Props) -> Html {
             <thead>
                 <tr>
                     <th>{"Rank"}</th>
-                    <th>{"Candidate"}</th>
-                    <th>{"Active Letters"}</th>
+                    <th>{"Name"}</th>
+                    <th>{"Description"}</th>
                     <th>{"Score"}</th>
                 </tr>
             </thead>
@@ -24,8 +24,8 @@ pub fn cand_view(props: &Props) -> Html {
                     for candidates.into_iter().enumerate().map(|(i, (cand, active, score))| html! {
                         <tr>
                             <td>{i+1}</td>
-                            <td><a href={format!("https://www.google.com/search?q={}", cand)} target="_blank">{cand}</a></td>
-                            <td>{active}</td>
+                            <td class="cand-name"><a href={format!("https://www.google.com/search?q={}", cand.to_lowercase())} target="_blank">{cand}</a></td>
+                            <td class="cand-desc">{active}</td>
                             <td>{score}</td>
                         </tr>
                     })

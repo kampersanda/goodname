@@ -1,8 +1,10 @@
-use goodname::{activate_positions, Enumerator, Lexicon};
+use anyhow::Result;
+use goodname::{Enumerator, Lexicon};
 use once_cell::sync::Lazy;
 use yew::prelude::*;
 
 use crate::cand_view::CandView;
+use crate::range_input::RangeInput;
 use crate::text_input::TextInput;
 
 static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
@@ -12,12 +14,14 @@ static LEXICON: Lazy<Lexicon> = Lazy::new(|| {
 
 pub enum Msg {
     SetText(String),
+    SetPrefixLen(String),
     GenCandidates,
 }
 
 #[derive(Debug)]
 pub enum MatchCase {
     NotYet,
+    NotMatch,
     Within,
     Overflow,
     Error(String),
@@ -29,12 +33,25 @@ impl Default for MatchCase {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct App {
     text: String,
+    prefix_len: String,
     match_case: MatchCase,
     num_matched: usize,
     candidates: Vec<(String, String, usize)>,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self {
+            text: "".to_string(),
+            prefix_len: "0".to_string(),
+            match_case: MatchCase::NotYet,
+            num_matched: 0,
+            candidates: vec![],
+        }
+    }
 }
 
 impl App {
@@ -43,32 +60,36 @@ impl App {
             self.match_case = MatchCase::NotYet;
             self.num_matched = 0;
             self.candidates = vec![];
-        } else {
-            let matched = Enumerator::all_subsequences_sorted(&LEXICON, &self.text);
-            match matched {
-                Ok(matched) => {
-                    self.num_matched = matched.len();
-                    if self.num_matched <= 100 {
-                        self.match_case = MatchCase::Within;
-                    } else {
-                        self.match_case = MatchCase::Overflow;
-                    }
-                    self.candidates = matched[..matched.len().min(100)]
-                        .iter()
-                        .map(|m| {
-                            (
-                                LEXICON.word(m.word_id).to_string(),
-                                activate_positions(&self.text, m),
-                                m.score,
-                            )
-                        })
-                        .collect();
-                }
-                Err(e) => {
-                    self.match_case = MatchCase::Error(e.to_string());
-                }
+            return;
+        }
+        match self.enumurate() {
+            Ok(_) => {}
+            Err(e) => {
+                self.match_case = MatchCase::Error(e.to_string());
             }
         }
+    }
+
+    fn enumurate(&mut self) -> Result<()> {
+        let enumerator = Enumerator::init(&LEXICON, &self.text)?;
+        let enumerator = enumerator.prefix_len(self.prefix_len.parse()?)?;
+        let matched = enumerator.all_subsequences()?;
+        self.num_matched = matched.len();
+        if self.num_matched == 0 {
+            self.match_case = MatchCase::NotMatch;
+        } else if self.num_matched <= 100 {
+            self.match_case = MatchCase::Within;
+        } else {
+            self.match_case = MatchCase::Overflow;
+        }
+        self.candidates = matched[..matched.len().min(100)]
+            .iter()
+            .map(|m| {
+                let (word, desc) = enumerator.format_match(m);
+                (word, desc, m.score)
+            })
+            .collect();
+        Ok(())
     }
 }
 
@@ -84,15 +105,13 @@ impl Component for App {
     fn update(&mut self, _ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::SetText(text) => self.text = text,
+            Msg::SetPrefixLen(prefix_len) => self.prefix_len = prefix_len,
             Msg::GenCandidates => self.gen_candidates(),
         };
         true
     }
 
     fn view(&self, ctx: &Context<Self>) -> Html {
-        let on_change = ctx.link().callback(Msg::SetText);
-        let onclick = ctx.link().callback(|_| Msg::GenCandidates);
-
         let num_matched = self.num_matched;
         let candidates = self.candidates.clone();
 
@@ -109,14 +128,14 @@ impl Component for App {
                         <h2>{"What is this?"}</h2>
                         <div>
                             {"Given a brief description of your method or software, this tool enumerates name candidates forming subsequences of the description, i.e., "}
-                            <i>{"abbreviation."}</i>
+                            <i>{"acronym."}</i>
                         </div>
                         <div>
                             {"(e.g., \"Character wise double array dictionary\" ⇒ \"crawdad\", \"cheddar\", and so on.)"}
                         </div>
                         <h2>{"How to use?"}</h2>
                         <div>
-                            {"Enter your description using only lowercase letters or spaces basically. Set UPPERCASE only for letters that you want to be always included in a name candidate."}
+                            {"Enter your description using only lowercase letters or a space basically. Set UPPERCASE only for letters that you want to be always included in a name candidate."}
                         </div>
                         <div>
                             {"(e.g., when entering \"Character wise Double array Dictionary\", subsequence ('C','D','D') is always included in the candidates.)"}
@@ -136,15 +155,30 @@ impl Component for App {
                             {"Enter a brief description of your method or software:"}
                         </div>
                         <div>
-                            <TextInput {on_change} value={self.text.clone()} />
+                            <TextInput on_change={ctx.link().callback(Msg::SetText)} value={self.text.clone()} name="yourdesc" />
                         </div>
-                        <button {onclick}>
-                            {"Search"}
-                        </button>
+                        <div>
+                            {format!("Set the maximum number of arbitrary prefix letters to allow for generating recursive acronyms: ")}
+                        </div>
+                            <label class="range" for="prefix">{self.prefix_len.clone()}</label>
+                            <RangeInput on_change={ctx.link().callback(Msg::SetPrefixLen)} value={self.prefix_len.clone()} name="prefix" />
+                        <div>
+                        </div>
+                        <div>
+                            <button onclick={ctx.link().callback(|_| Msg::GenCandidates)}>
+                                {"Search"}
+                            </button>
+                        </div>
                     </div>
                     {
                         match &self.match_case {
                             MatchCase::NotYet => html! {},
+                            MatchCase::NotMatch => html! {
+                                <div class="candidates" style="font-weight:bold">
+                                    <div>{format!("No candidates were found :(")}</div>
+                                    <div>{format!("Edit your input, such as setting more lowercase letters or a larger number for recursive acronym.")}</div>
+                                </div>
+                            },
                             MatchCase::Within => html! {
                                 <div class="candidates">
                                     <div class="nummatches">

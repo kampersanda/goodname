@@ -4,8 +4,8 @@ use std::io::{stdin, BufRead, BufReader};
 use std::path::Path;
 use std::string::String;
 
+use goodname::Enumerator;
 use goodname::Lexicon;
-use goodname::{activate_positions, Enumerator};
 
 use clap::Parser;
 
@@ -15,6 +15,9 @@ struct Args {
     #[clap(short = 'w', action)]
     wordlist_filename: String,
 
+    #[clap(short = 'p', action, default_value = "0")]
+    prefix_len: usize,
+
     #[clap(short = 'k', action, default_value = "30")]
     topk: usize,
 }
@@ -22,23 +25,19 @@ struct Args {
 fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
     let lex = Lexicon::new(load_lines(&args.wordlist_filename)?)?;
+    let prefix_len = args.prefix_len;
 
     println!("Enter your text:");
     #[allow(clippy::significant_drop_in_scrutinee)]
     for line in stdin().lock().lines() {
         let line = line?;
-        let matched = Enumerator::all_subsequences_sorted(&lex, &line)?;
+        let enumerator = Enumerator::init(&lex, &line)?.prefix_len(prefix_len)?;
+        let matched = enumerator.all_subsequences()?;
         println!("Matched {} candidates", matched.len());
         let k = args.topk.min(matched.len());
         for (i, m) in matched[..k].iter().enumerate() {
-            let formatted = activate_positions(&line, m);
-            println!(
-                "{:>4} {}: {} (score={})",
-                i + 1,
-                lex.word(m.word_id),
-                formatted,
-                m.score
-            );
+            let (word, desc) = enumerator.format_match(m);
+            println!("{:>4} {}: {} (score={})", i + 1, word, desc, m.score);
         }
         println!("Enter your text:");
     }
