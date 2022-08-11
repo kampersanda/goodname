@@ -18,8 +18,8 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar".
 `goodname-cli` provides a CLI tool of Goodname.
 The arguments are
 - `-w`: Input word list (must be sorted, be unique, and include no upper-case letters), and
-- `-k`: Top-k to print (default=30).
-- `-p`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=0, must be in 0..=3).
+- `-k`: Top-k to print (default=`30`).
+- `-p`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=`0`, must be in `0..=3`).
 
 Enter your description using only lowercase letters or a space basically.
 Set UPPERCASE only for letters that you want to be always included in a name candidate.
