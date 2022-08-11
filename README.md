@@ -9,7 +9,8 @@ this tool will suggest some name candidates such as "crawdad" and "cheddar".
 
 ## Web App
 
-[Web App](https://kampersanda.github.io/goodname/) is the easiest way to try this tool.
+The [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try this tool.
+(This demo movie is at v0.1.1.)
 
 ![](./movies/demo.gif)
 
