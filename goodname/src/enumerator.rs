@@ -203,7 +203,7 @@ impl<'a> Enumerator<'a> {
                     });
                 if MAX_MATCHES <= matched.len() {
                     return Err(anyhow!(
-                        "#matches is too many, exceeding {}. Adjust the number by shortening the description or specifying more uppercase letters.",
+                        "#matches is too many, exceeding {}. Edit your input to reduce the number by shortening the description, specifying more UPPERCASE letters, etc.",
                         MAX_MATCHES
                     ));
                 }

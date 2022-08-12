@@ -158,7 +158,7 @@ impl Component for App {
                             <TextInput on_change={ctx.link().callback(Msg::SetText)} value={self.text.clone()} name="yourdesc" />
                         </div>
                         <div>
-                            {format!("Set the maximum number of arbitrary prefix letters to allow for generating recursive acronyms: ")}
+                            {"Set the maximum number of arbitrary prefix letters to allow for generating recursive acronyms: "}
                         </div>
                             <label class="range" for="prefix">{self.prefix_len.clone()}</label>
                             <RangeInput on_change={ctx.link().callback(Msg::SetPrefixLen)} value={self.prefix_len.clone()} name="prefix" />
@@ -174,9 +174,13 @@ impl Component for App {
                         match &self.match_case {
                             MatchCase::NotYet => html! {},
                             MatchCase::NotMatch => html! {
-                                <div class="candidates" style="font-weight:bold">
-                                    <div>{format!("No candidates were found :(")}</div>
-                                    <div>{format!("Edit your input, such as setting more lowercase letters or a larger number for recursive acronym.")}</div>
+                                <div class="candidates">
+                                    <div class="toomany-hint">
+                                        {"No candidates were found :("}
+                                    </div>
+                                    <div class="toomany-hint">
+                                        {"Edit your input by setting more lowercase letters or a larger number for recursive acronyms, etc."}
+                                    </div>
                                 </div>
                             },
                             MatchCase::Within => html! {
@@ -191,6 +195,9 @@ impl Component for App {
                                 <div class="candidates">
                                     <div class="nummatches">
                                         {format!("#matches = {} (Only the top-100 candidates are printed.)", num_matched)}
+                                    </div>
+                                    <div class="toomany-hint">
+                                        {"Too many? If so, edit your input by shortening the description, specifying more UPPERCASE letters, etc."}
                                     </div>
                                     <CandView {candidates} />
                                 </div>

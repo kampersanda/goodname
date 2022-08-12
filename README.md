@@ -23,7 +23,7 @@ The [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try
 
 `goodname-cli` provides a CLI tool of Goodname.
 The arguments are
-- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters), and
+- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters).
 - `-k`: Top-k to print (default=`30`).
 - `-l`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=`0`, must be in `0..=3`).
 
@@ -90,7 +90,7 @@ $d(i)$ is the distance from $T[i]$ to its preceding space (assuming $T[-1]$ is a
 ## Complexity
 
 Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$.
-To perform this enumeration in practical time, we generate subsequences on a trie and early prune those that are not candidates.
+To perform this in practical time, we generate subsequences on a trie and early prune those that are not candidates.
 Furthermore, if the number of candidates exceeds 10k, the process will be forced to terminate.
 
 
