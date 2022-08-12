@@ -23,7 +23,7 @@ The [Web App](https://kampersanda.github.io/goodname/) is the easiest way to try
 
 `goodname-cli` provides a CLI tool of Goodname.
 The arguments are
-- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters), and
+- `-w`: Input word list (must be sorted, be unique, and include no upper-case letters).
 - `-k`: Top-k to print (default=`30`).
 - `-l`: The maximum number of arbitrary prefix letters to allow for generating recursive acronyms (default=`0`, must be in `0..=3`).
 
