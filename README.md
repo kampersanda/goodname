@@ -90,7 +90,7 @@ $d(i)$ is the distance from $T[i]$ to its preceding space (assuming $T[-1]$ is a
 ## Complexity
 
 Enumerating all possible subsequences takes $O(2^n)$ time for an input text of length $n$.
-To perform this enumeration in practical time, we generate subsequences on a trie and early prune those that are not candidates.
+To perform this in practical time, we generate subsequences on a trie and early prune those that are not candidates.
 Furthermore, if the number of candidates exceeds 10k, the process will be forced to terminate.
 
 
