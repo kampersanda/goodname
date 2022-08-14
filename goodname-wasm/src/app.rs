@@ -22,8 +22,9 @@ pub enum Msg {
 pub enum MatchCase {
     NotYet,
     NotMatch,
-    Within,
-    Overflow,
+    Under10,
+    Under100,
+    Over100,
     Error(String),
 }
 
@@ -77,10 +78,12 @@ impl App {
         self.num_matched = matched.len();
         if self.num_matched == 0 {
             self.match_case = MatchCase::NotMatch;
+        } else if self.num_matched <= 10 {
+            self.match_case = MatchCase::Under10;
         } else if self.num_matched <= 100 {
-            self.match_case = MatchCase::Within;
+            self.match_case = MatchCase::Under100;
         } else {
-            self.match_case = MatchCase::Overflow;
+            self.match_case = MatchCase::Over100;
         }
         self.candidates = matched[..matched.len().min(100)]
             .iter()
@@ -183,7 +186,18 @@ impl Component for App {
                                     </div>
                                 </div>
                             },
-                            MatchCase::Within => html! {
+                            MatchCase::Under10 => html! {
+                                <div class="candidates">
+                                    <div class="nummatches">
+                                        {format!("#matches = {}", num_matched)}
+                                    </div>
+                                    <div class="toomany-hint">
+                                        {"Too few? If so, edit your input by setting more lowercase letters or a larger number for recursive acronyms, etc."}
+                                    </div>
+                                    <CandView {candidates} />
+                                </div>
+                            },
+                            MatchCase::Under100 => html! {
                                 <div class="candidates">
                                     <div class="nummatches">
                                         {format!("#matches = {}", num_matched)}
@@ -191,7 +205,7 @@ impl Component for App {
                                     <CandView {candidates} />
                                 </div>
                             },
-                            MatchCase::Overflow => html! {
+                            MatchCase::Over100 => html! {
                                 <div class="candidates">
                                     <div class="nummatches">
                                         {format!("#matches = {} (Only the top-100 candidates are printed.)", num_matched)}
